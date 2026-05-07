@@ -1,0 +1,55 @@
+<nav>
+  <h2 id="header-title"></h2>
+  <a id="settings-button">
+    <img src="/img/settings-icon.svg" alt="settings">
+  </a>
+</nav>
+
+<section id="setting-dropdown">
+  <% if (user == 'Guest') { %>
+      <a href="/authenticate">Login</a>
+  <% } else if (user.role == 'Member' || user.role == 'Trainer') { %> 
+      <a href="/authenticate/logout">Logout</a>
+  <% } else if (user.role == 'Admin') { %>
+    <a href="/admin">Admin Page</a>
+    <a href="/authenticate/logout">Logout</a>
+  <% } %>
+</section>
+
+<script>
+
+  let settingsButton = document.getElementById('settings-button')
+  let headerTitle = document.getElementById('header-title')
+  document.addEventListener('DOMContentLoaded', () => {
+    settingsButton.addEventListener('click', () => {
+    let settingDropdown = document.getElementById('setting-dropdown')
+    if (settingDropdown.style.display == 'block') {
+      settingDropdown.style.display = 'none'
+    } else {
+      settingDropdown.style.display = 'block'
+    }})
+
+    let sectionBlock = document.querySelectorAll('#session-blocks')
+    let navButtons = [...document.querySelectorAll('footer a')]
+      navButtons.find(link => {
+      if (currentUrl.includes(link.pathname)) {
+        let subtitle = link.childNodes[3].innerText
+        if (subtitle == 'Blog') {
+          headerTitle.innerText = `High Street ${subtitle} Posts`
+        } else if (currentUrl.includes('/sessions/create/')) {
+          headerTitle.innerText = `Editing Session`
+          return
+        } else if (currentUrl.includes('/sessions/create')) {
+          headerTitle.innerText = `Creating Session`
+          return
+        } else if (currentUrl.includes('/sessions/')) {
+          let sessionActivity = document.getElementById('session-activity')
+          headerTitle.innerText = `Book ${sessionActivity.innerText}`
+          return
+        } else {
+          headerTitle.innerText = subtitle
+        }
+      }
+    })
+  })
+</script>

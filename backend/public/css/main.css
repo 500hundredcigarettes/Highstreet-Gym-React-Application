@@ -1,0 +1,463 @@
+html {
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: #000318;
+  color: white;
+  padding-top: 18%;
+  padding-bottom: 20%;
+}
+
+body {
+  margin: 0px;
+}
+
+nav {
+  display: flex;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: #1F4D7C;
+  align-items: center;
+  justify-content: space-between;
+}
+
+nav h2 {
+  margin-left: 10%;
+  color: white;
+}
+
+nav img {
+  width: 30px; 
+  height: 30px; 
+  border-radius: 50%;  
+  margin-left: -100%;
+}
+
+input, select, #post-content {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 18px;
+  padding: 2%;
+  background: #262428;
+  border-color: white;
+  border-style: solid;
+  border-width: 1px;
+  color: white;
+}
+
+label {
+  font-weight: bold;
+  font-size: 20px;
+  margin: 2% 0%;
+}
+
+#welcome-header {
+  margin-left: 20%;
+  margin-right: 20%;
+  text-align: center;
+  color: #1F4D7C;
+}
+
+#login-header {
+  text-align: center;
+  margin-top: 20%;
+}
+
+#authenticate-block, #signup-form {
+  border-radius: 0px;
+  display: flex;
+  margin-left: 7%;
+  margin-right: 7%;
+  justify-content: center;
+  flex-direction: column;
+  width: 86%;
+}
+
+#signup-redirect, #login-button, #signup-button, #cancel-signup, #button-row > *, #post-button-row > * {
+  text-align: center;
+  background-color: white;
+  color: #1F4D7C;
+  margin: 5% 5%;
+  padding: 6%;
+  border-radius: 10px;
+  border-style: none;
+  font-weight: bold;
+  font-size: 20px;
+}
+
+#signup-form > #gym {
+  margin-bottom: 15%;
+}
+
+#button-row {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+#button-row > a {
+  background-color: #1F4D7C;
+  color: white;
+}
+
+#button-row > button, #button-row > input[type='submit'] {
+  background-color: white;
+  color: #1F4D7C;
+}
+
+#login-button {
+  margin-left: 25%;
+  margin-right: 25%;
+  width: 50%;
+}
+
+#signup-redirect {
+  background-color: transparent;
+  color: white;
+  text-decoration: underline;
+}
+
+#setting-dropdown {
+  position: fixed;
+  padding: 0%;
+  top: 67px;
+  left: 0;
+  right: 0;
+  background-color: #262428;
+  text-align: right;
+  display: none;
+}
+
+#setting-dropdown a {
+  margin: 5%;
+  display: block;
+}
+
+a {
+  text-decoration: none;
+  color: white;
+}
+ 
+#timetable-header {
+  display: inline-block;
+  margin-top: 5%;
+  margin-left: 3%;
+  font-size: 22px;
+  font-weight: bold;
+  font-style: italic;
+}
+
+input[type="week"] {
+  width: 30px; 
+  height: 30px; 
+  border: none; 
+  background: url('../img/calender-icon.svg') no-repeat center;
+  background-size: 30px; 
+  cursor: pointer;
+  padding: 0; 
+  margin: 0; 
+}
+
+input[type="week"]::-webkit-calendar-picker-indicator {
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  background: transparent;
+}
+
+#days-block {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+#days-block > section {
+  font-weight: bold;
+  padding-top: 2%;
+  margin: 0% 1.5%;
+  text-align: center;
+  background-color: #262428;
+  border-radius: 5px;
+  height: 100px;
+  width: 122%;
+}
+
+#create-session {
+  margin: 2% 10%;
+  display: block;
+}
+
+
+#all-sessions {
+  min-height: 500px;
+  width: 90%;
+  z-index: -1;
+  border-radius: 10px;
+  padding-top: 1%;
+  padding-bottom: 1%;
+  margin: 5% 5%;
+  background-color: #262428;
+}
+
+#session-block {
+  margin: 10% 7%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+#activity-name, #book-button {
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0px;
+  display: inline-block;
+}
+
+#book-button, #create-session {
+  text-align: center;
+  color: white;
+  background-color: #1F4D7C;
+  border-radius: 5px;
+  padding: 5px;
+}
+
+#create-booking-form {
+    display: flex;
+    text-align: center;
+    align-items: center;
+    height: 100%;
+    margin: 10% 10%;
+    flex-direction: column;
+    background-color: #262428;
+    border-radius: 10px;
+}
+
+#session-day {
+  font-weight: bold;
+  font-size: 30px;
+  margin-top: 5%;
+  margin-bottom: 0%;
+}
+
+#session-activity {
+    font-size: 50px;
+    font-weight: bold;
+    margin-bottom: 10%;
+    margin-top: 14%;
+}
+
+ #session-date {
+  font-weight: bold;
+  font-size: 25px;
+  margin-top: 0%;
+  margin-bottom: 5%;
+ }
+
+
+#create-booking-form > * {
+  width: 90%;
+}
+
+#create-booking-form > select {
+  margin: 5% 0%;
+  padding: 10% 0%;
+}
+
+  select option:disabled {
+    color: white;
+  }
+
+#all-bookings {
+  display: flex;
+  flex-direction: column;
+  text-align: right;
+  background-color: #1F4D7C;
+  border-radius: 10px;
+  margin: 7%;
+}
+
+#booking-date {
+  margin-right: 5%;
+}
+
+#trainer-activity-row {
+  display: flex;
+  justify-content: left;
+  font-size: 20px;
+  font-weight: bold;
+  margin-left: 5%;
+}
+
+#location-date-row {
+  display: flex;
+  justify-content: space-between;
+  margin-left: 5%;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+#delete-booking {
+  border: none;
+  background-color: transparent;
+}
+
+#delete-booking > img {
+  margin-right: 10px;
+  margin-bottom: 10px;
+  height: 25px;
+  width: 25px;
+}
+
+  #create-post-popup{
+    background-color: rgba(1, 4, 15, 0.596); 
+    display: none; 
+    position: fixed; 
+    top: 0px; 
+    left: 0px; 
+    bottom: 0px;
+    right: 0px; 
+    align-items: center; 
+    justify-content: center;
+    z-index: 100;
+  }
+
+  #post-block {
+    word-wrap: break-word;
+    width: 84%;
+    margin: 8%;
+    margin-bottom: 5%;
+  }
+
+
+  #create-post {
+    position: fixed;
+    bottom: 17%;
+    right: 5%;
+    width: 50px; 
+    height: 50px; 
+    padding: 0px;
+    background-color: #1F4D7C;
+    color: white;
+    border: none;
+    font-size: 40px;
+    display: flex; 
+  }
+
+  #post-block > h3 {
+    color: #1F4D7C;
+  }
+
+  #post-block > .post-content {
+    font-size: 20px;
+    font-weight: bold;
+  }
+
+  #delete-post {
+    border: none;
+    background-color: transparent;
+  }
+  
+  #delete-post > img {
+    margin-bottom: 10px;
+    height: 25px;
+    width: 25px;
+  }
+
+  #delete-block {
+    display: flex;
+    justify-content: right;
+  }
+
+  #post-seperator {
+    display: block;
+    margin: 10% 0%;
+    height: 2px;
+    width: 100%;
+    background-color: #1F4D7C;
+  }
+
+  #create-post-form {
+    padding-left: 10%;
+    padding-right: 10%;
+    padding-top: 10%;
+    padding-bottom: 5%;
+    margin-bottom: 10%;
+    background-color: #262428;
+    border-radius: 10px;
+}
+
+  #create-post-form > #post-content {
+    vertical-align: top;
+    height: 400px;
+    background-color: black;
+    border-radius: 10px;
+    font-weight: bold;
+    font-size: 20px;
+  }
+
+
+#post-button-row {
+  text-align: center;
+}
+
+#close-post {
+  background-color: #1F4D7C;
+  color: white;
+}
+
+ #confirm-create-post {
+  background-color: white;
+  color: #1F4D7C;
+}
+
+#profile-block {
+  margin: 0% 5%;
+}
+
+footer {
+  display: flex;
+  position: fixed;
+  bottom: 0;
+  background-color: #1F4D7C;
+}
+
+footer img {
+  height: 50%;
+  width: 50%;
+  object-fit: contain;
+}
+
+footer > a {
+  font-weight: bold;
+  color: white;
+  text-decoration: none;
+}
+
+footer > a > p {
+  margin: 10% 0%;
+  font-weight: bold;
+  color: white;
+  text-decoration: none;
+}
+
+footer > a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+@media (min-width: 650px) {
+  footer img {
+    width: 30%;
+  }
+}
+
+@media (min-width: 950px) {
+
+  footer > a > p {
+    margin: 5% 0%;
+  }
+
+  footer img {
+    width: 22%;
+  }
+}

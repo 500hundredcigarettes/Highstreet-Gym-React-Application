@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/css/admin.css">
+  <title>Admin home</title>
+  <style>
+    * {
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    html {
+      padding: 0;
+    }
+
+    #view-admin, #activites-locations, #bookings, #create-user-button {
+      text-decoration: none;
+      text-align: center;
+      background-color: #a04545;
+      color: white;
+      padding: 2%;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 1%;
+      font-size: 16px;
+    }
+
+    #create-user-button {
+      font-size: 20px;
+      font-weight: bolder;
+      width: 40px;
+      height: 40px;
+      margin: 0% 3%;
+      padding: 10px;
+    }
+
+    #option-buttons-row {
+      background-color: #000318;
+      border-style: solid;
+      border-top-color: #ccc;
+      border-bottom-color: transparent;
+      border-right-color: transparent;
+      border-left-color: transparent;
+      padding-top: 3%;
+      position: fixed;
+      bottom: 0;
+      right: 0;
+      left: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #create-user {
+      width: 70%;
+      background-color:#262428;
+    }
+
+    input[type='text'], 
+    input[type='password'], 
+    input[type='email'] {
+      background-color: black;
+      padding: 8px;
+      border: 2px solid #ccc;
+      border-radius: 4px;
+      transition: border-color 0.3s ease;
+      width: 100%;
+      box-sizing: border-box;
+      margin-bottom: 10px;
+    }
+    
+    input:valid:not(#searchbar) {
+      border-color: #4CAF50; 
+    }
+
+    input.invalid {
+      border-color: #ff3860; 
+    }
+
+    .error-message {
+      color: #ff3860;
+      font-size: 0.85em;
+      margin-top: -8px;
+      margin-bottom: 10px;
+      display: block;
+    }
+    
+    form {
+      width: 100%;
+      margin: 0 auto;
+    }
+    
+    label {
+      color: white;
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    #searchbar {
+      margin: 5% 10%;
+      width: 80%;
+    }
+    
+    #close-dialog, input[type="submit"] {
+      background-color: #4588a0;
+      color: white;
+      text-align: center;
+      display: block;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 20px;
+      font-size: 16px;
+    }
+
+    input[type="submit"] {
+      width: 100%;
+    }
+    
+    #close-dialog {
+      color: #4588a0;
+      background-color:#262428;
+    }
+    
+    
+    input[type="submit"]:hover {
+      background-color: #51a1d2;
+    }
+    
+    #close-create-user:hover {
+      background-color: #385f78;
+    }
+    
+    select {
+      width: 100%;
+      padding: 8px;
+      border: 2px solid #ccc;
+      border-radius: 4px;
+      margin-bottom: 15px;
+      box-sizing: border-box;
+    }
+    
+    #user-list {
+      margin: 0% 2.5%;
+    }
+    
+    #user-list li {
+      list-style-type: none;
+      align-items: center;
+    }
+    
+    #user-list ul {
+      padding: 0px;
+    }
+    
+    #user-columns {
+      display: flex;
+      border-style: solid;
+      border-width: 1px;
+      border-color: white;
+    }
+    
+    #user-columns span:nth-child(1) {
+      flex-basis: 70%;
+    }
+    
+    #user-columns span:nth-child(2), #user-columns span:nth-child(3)  {
+      flex-basis: 15%;
+    }
+    
+    #user-row {
+      margin: 20px 0px;
+    }
+    
+    #user-row p {
+      width: 70%;
+    }
+    
+    .user-row {
+      display: flex;
+    }
+
+    .hidden-results {
+      display: none;
+    }
+
+
+    #user-row button {
+      margin-right: 10px;
+    }
+
+    #user-row span:nth-child(3) {
+      width: 15%;
+    }
+
+    #edit-popup {
+      padding: 1.5%;
+      background-color: #7c1f1f;
+      color: white;
+      border-style: none;
+      border-radius: 10px;
+      border-style: none;
+      font-size: 20px;
+    }
+
+    #edit-navigation-dialog {
+      width: 90%;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      background-color: #262428;
+    }
+
+    #edit-navigation-dialog > * {
+      margin: 4%;
+      width: 80%;
+      padding: 4%;
+      border-radius: 10px;
+      border-style: none;
+      font-weight: bold;
+      font-size: 20px;
+    }
+
+    #edit-navigation-dialog > a {
+      font-weight: bold;
+      color: white;
+      background-color: #1F4D7C;
+    }
+
+    @media (min-width: 650px) {
+      #user-columns span:nth-child(2), #user-columns span:nth-child(3)  {
+        flex-basis: 14%;
+      }
+
+
+    #user-row span:nth-child(3) {
+      text-align: center;
+      width: 15%;
+    }
+    }
+
+  </style>
+</head>
+<body>
+    <section id="searchbar-section">
+      <input type="text" id="searchbar" placeholder="Search for users...">
+    </section>
+    
+    <section id="user-list">
+      <ul>
+        <li id="user-columns">
+          <span>Full Name</span>
+          <span>Edit</span>
+          <span>Role</span>
+        </li>
+      </ul>
+
+      <ul>
+        <% for(const user of users) { %>
+        <li id="user-row">
+          <p id="user-full-name"><%= user.firstName %> <%= user.lastName %></p>
+          <button id="edit-popup" onclick="openEditDialog('<%= user.id %>')">Edit</button>
+          <span><%= user.role %></span>
+        </li>
+        <%}%>
+      </ul>
+    </section>
+    
+    <dialog id="edit-navigation-dialog">
+      <a id="edit-navigate-profile">Go to this user's profile</a>
+      <a id="edit-navigate-posts">Go to this user's posts</a>
+      <button id="close-dialog" onclick="editNavigationDialog.close(), editNavigationDialog.style.display = 'none'">Cancel</button>
+    </dialog>
+
+    <section id="option-buttons-row">  
+      <a id="activites-locations" href="/admin/editmore">Activities/Locations</a>
+      <a id="bookings" href="/admin/bookings">Bookings</a>
+      <button id="create-user-button">+</button>
+      <a id="view-admin" href="/sessions">Admin view</a>
+    </section>
+
+    <%- include('partials/success_status.ejs') %>
+
+    <dialog id="create-user">
+      <form
+      action="/admin"
+      method="post"
+      id="create-user-form"
+      novalidate
+      >
+        <label for="first-name">First Name:</label>
+        <input type="text" name="firstName" id="first-name" pattern="^[a-zA-Z0-9]+(?:[ \'-][a-zA-Z0-9]+)*$" required />
+        <span class="error-message" id="first-name-error"></span>
+
+        <label for="last-name">Last Name:</label>
+        <input type="text" name="lastName" id="last-name" pattern="^[a-zA-Z0-9]+(?:[ \'-][a-zA-Z0-9]+)*$" required/>
+        <span class="error-message" id="last-name-error"></span>
+        
+        <label for="password">Password:</label>
+        <input type="password" name="password" id="password" required minlength="6"/>
+        <span class="error-message" id="password-error"></span>
+        
+        <label for="confirm-password">Confirm password:</label>
+        <input type="password" name="confirmPassword" id="confirm-password" required/>
+        <span class="error-message" id="confirm-password-error"></span>
+        
+        <label for="email">Email:</label>
+        <input type="email" name="email" id="email" 
+        pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" 
+        title="Please enter a valid email address" required/>
+        <span class="error-message" id="email-error"></span>
+
+        <label for="address">Address:</label>
+        <input type="text" name="address" id="address" pattern="^[a-zA-Z0-9\s]+$" 
+        title="Address can only contain letters, numbers, and spaces" required/>
+        <span class="error-message" id="address-error"></span>
+
+        <label for="phone-number">Phone Number:</label>
+        <input type="text" name="phoneNumber" id="phone-number" pattern="^[0-9]+$" 
+        title="Phone Number can only contain numbers" minlength="10" required/>
+        <span class="error-message" id="phone-number-error"></span>
+
+        <label for="gym">Select Gym:</label>
+        <select name="gym" id="gym" required>
+          <% for (const gym of gyms) { %>
+            <option value="<%= gym.locationTitle %>"><%= gym.locationTitle  %></option>
+          <% } %>
+        </select>
+        <span class="error-message" id="gym-error"></span>
+        
+        <label for="role">Select Role:</label>
+        <select name="role" id="role">
+          <option value="Admin">Admin</option>
+          <option value="Trainer">Trainer</option>
+          <option value="Member">Member</option>
+        </select>
+
+        <input type="submit" value="create"/>
+        <a id="close-dialog" onclick="createUserDialog.close(), createUserDialog.style.display = 'none'">Close</a>
+      </form>
+    </dialog>
+
+    <script>
+    let searchBar = document.getElementById('searchbar')
+
+    document.querySelectorAll('#user-row').forEach(block => block.classList.add('user-row'))
+
+
+    function filterItems() {
+        const searchTerm = searchBar.value.toLowerCase().trim()
+        
+            const userRow = document.querySelectorAll('#user-row')
+            userRow.forEach(block => {
+              const title = block.querySelector('p').textContent.toLowerCase()
+              if (searchTerm === '' || title.includes(searchTerm)) {
+                    block.classList.remove('hidden-results')
+                } else {
+                    block.classList.add('hidden-results')
+                }
+            })
+      }
+
+      searchBar.addEventListener('input', filterItems)
+
+      const createUserDialog = document.getElementById('create-user')
+      const createUserButton = document.getElementById('create-user-button')
+      createUserButton.addEventListener('click', () => {
+        createUserDialog.showModal()
+        createUserDialog.style.display = 'flex'
+      })
+
+      const editNavigationDialog = document.getElementById('edit-navigation-dialog')
+      function openEditDialog(userId) {
+        editNavigationDialog.showModal()
+        let styleProfileDialog = document.querySelector('dialog[open]')
+        styleProfileDialog.style.display = 'flex'
+        document.getElementById('edit-navigate-profile').href = `/profile/${userId}`
+        document.getElementById('edit-navigate-posts').href = `/posts/${userId}`
+      }
+
+      document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('create-user-form')
+      const password = document.getElementById('password')
+      const confirmPassword = document.getElementById('confirm-password')
+      confirmPassword.addEventListener('input', () => {
+        if (password.value !== confirmPassword.value) {
+          this.setCustomValidity("Passwords don't match")
+        } else {
+          this.setCustomValidity('')
+        }
+      });
+      
+      form.addEventListener('submit', event => {
+        if (!form.checkValidity()) {
+          event.preventDefault()
+          event.stopPropagation()
+          const allInputs = form.querySelectorAll('input')
+          allInputs.forEach(input => {
+            if (!input.checkValidity()) {
+              input.classList.add('invalid')
+              displayValidationError(input)
+              
+            } else {
+              input.classList.remove('invalid')
+              const errorElement = document.getElementById(`${input.id}-error`)
+              if (errorElement) {
+                errorElement.textContent = ''
+              }
+            }
+          })
+          if (password.value !== confirmPassword.value) {
+            confirmPassword.classList.add('invalid')
+            document.getElementById('confirm-password-error').textContent = 
+            "Passwords don't match"
+            event.preventDefault()
+          }
+        } else if (password.value !== confirmPassword.value) {
+          event.preventDefault()
+          confirmPassword.classList.add('invalid')
+          document.getElementById('confirm-password-error').textContent = 
+          "Passwords don't match"
+        } else {
+          successPopup.style.display = 'flex'
+          successHeader.innerText = 'New user created successfully'
+          createUserDialog.close()
+        }
+      })
+      
+      function displayValidationError(input) {
+        const errorElement = document.getElementById(`${input.id}-error`)
+        if (!errorElement) return
+        
+        if (input.validity.valueMissing) {
+          errorElement.textContent = 'This field is required'
+        } else if (input.validity.typeMismatch) {
+          errorElement.textContent = 'Please enter a valid value'
+        } else if (input.validity.patternMismatch) {
+          errorElement.textContent = 'Invalid format'
+        } else if (input.validity.tooShort) {
+          errorElement.textContent = `Value should be at least ${input.minLength} characters`
+        } else {
+          errorElement.textContent = 'Invalid value'
+        }  
+      }
+      // Handle Enter key press in form fields
+      form.addEventListener('keypress', event => {
+        if (event.key === 'Enter') {
+          const submitEvent = new Event('submit', { cancelable: true })
+          form.dispatchEvent(submitEvent)
+        }
+      })
+    })
+
+      filterItems()
+    </script>
+</body>
+</html>

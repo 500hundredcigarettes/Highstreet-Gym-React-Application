@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <% if (user.role == 'Admin') { %>
+    <link rel="stylesheet" href="/css/admin.css">
+  <% } else { %>
+    <link rel="stylesheet" href="/css/main.css">
+  <% } %>
+  <title>Create posts</title>
+</head>
+<body>
+
+<%- include('partials/header.ejs') %>
+
+<% for (const post of posts.reverse()) { %>
+  <section id="post-block">
+    <h3>
+      <%= post.userId.firstName %> <%= post.userId.lastName %> - 
+      <%= post.userId.role === 'Admin' ? 'Admin' : post.userId.role + ' at ' + post.userId.gymId.locationTitle %>
+    </h3>
+    <p class="post-content" id="<%= post.id %>"><%= post.postContent %></p>
+    <% if (user && user.role == 'Admin') { %>
+      <form id="delete-block" action="/posts/delete" method="post">
+        <button id="delete-post" name="deleteId" value="<%= post.id %>"><img src="/img/delete-icon.png" alt="delete"></button>
+      </form>
+    <% } else if (user && post.userId.id == user.id) { %>
+      <form id="delete-block" action="/posts/delete" method="post">
+        <button id="delete-post" name="deleteId" value="<%= post.id %>"><img src="/img/delete-icon.png" alt="delete"></button>
+      </form>
+    <% } %>
+  </section>
+  <span id="post-seperator"></span>
+<% } %>
+
+<input type="button" name="createPost" id="create-post" value="+">
+
+<section id="create-post-popup">
+  <% if (user.role == 'Admin') { %>
+    <% 
+      let postUrl
+      selectedUser.id ? postUrl = `posts/${selectedUser.id}` : `posts`
+    %>
+  <form id="create-post-form" action="/<%= postUrl %>" method="post">
+    <textarea rows="8" cols="25" pattern="^\s*\S.*\s*$" name="content" id="post-content"></textarea>
+    <section id="post-button-row">
+      <a id="close-post">Cancel</a>
+      <button id="confirm-post">Post</button>
+    </section>
+  </form>
+  <% } else { %>
+  <form id="create-post-form" action="/posts" method="post">
+    <textarea rows="8" cols="25" pattern="^\s*\S.*\s*$" name="content" id="post-content"></textarea>
+    <section id="post-button-row">
+      <a id="close-post">Cancel</a>
+      <button id="confirm-post">Post</button>
+    </section>
+  </form>
+  <% } %>
+</section>
+
+<%- include('partials/success_status.ejs') %>
+
+
+<% if (user && user.role == 'Admin') { %>
+<section id="edit-post-popup">
+  <form id="create-edit-form" action="/posts/edit" method="post">
+    <textarea rows="8" cols="25" pattern="^\s*\S.*\s*$" name="content" id="edit-content"></textarea>
+    <section id="post-button-row">
+      <a id="close-edit">Cancel</a>
+      <button id="confirm-edit-post" name="postId">Edit</button>
+    </section>
+  </form>
+</section>
+
+<script>
+let postButton = document.getElementById('create-post');
+let createPopup = document.getElementById('create-post-popup');
+let editPopup = document.getElementById('edit-post-popup');
+let closePost = document.getElementById('close-post');
+let postContent = document.getElementById('post-content')
+let confirmPost = document.getElementById('confirm-post');
+let closeEdit = document.getElementById('close-edit');
+let confirmEdit = document.getElementById('confirm-edit-post');
+let editContent = document.getElementById('edit-content');
+let deletePost = document.querySelectorAll('#delete-post');
+let postBlocks = document.querySelectorAll('#post-block');
+let postForm = document.getElementById('create-post-form')
+
+
+function showCreatePopup() {
+  createPopup.style.display = 'flex';
+}
+
+function showEditPopup(post) {
+  editPopup.style.display = 'flex';
+  editContent.value = post.childNodes[3].innerText;
+  confirmEdit.value = post.childNodes[3].id;
+}
+
+postButton.addEventListener('click', () => {
+  if (postButton.value === '+') {
+    showCreatePopup();
+  } else if (postButton.value === '#') {
+    showEditPopup(currentPost)
+  }
+});
+
+closePost.addEventListener('click', () => {
+  createPopup.style.display = 'none'
+});
+
+  postForm.addEventListener('submit', event => {
+    const postPattern = /^\s*\S.*\s*$/
+  if (postPattern.test(postContent.value)) {
+      successPopup.style.display = 'flex'
+      successHeader.innerText = 'Post successfully made'
+    } else {
+      event.preventDefault()
+      successPopup.style.display = 'flex'
+      successHeader.innerText = 'Post must not be empty'
+    }
+  })
+
+
+closeEdit.addEventListener('click', () => {
+  editPopup.style.display = 'none'
+});
+
+confirmEdit.addEventListener('click', () => {
+  successPopup.style.display = 'flex'
+  successHeader.innerText = 'Post successfully edited'
+});
+
+deletePost.forEach(deleteButton => {
+  deleteButton.addEventListener('click', () => {
+    successPopup.style.display = 'flex'
+    successHeader.innerText = 'Post successfully deleted'
+  });
+});
+
+let currentPost = null;
+
+postBlocks.forEach((post) => {
+  post.addEventListener('click', () => {
+    postBlocks.forEach(p => {
+      p.style.border = 'none'
+    });
+
+    if (postButton.value === '#') {
+      postButton.value = '+'
+      post.style.border = 'none'
+    } else {
+      postButton.value = '#'
+      post.style.borderStyle = 'solid'
+      post.style.borderColor = 'red'
+      currentPost = post
+    }
+  })
+})
+</script>
+<% } else { %>
+<script>
+  let postButton2 = document.getElementById('create-post')
+  let popup2 = document.getElementById('create-post-popup')
+  let closePost2 = document.getElementById('close-post')
+  let confirmPost2 = document.getElementById('confirm-post')
+  let deletePost2 = document.querySelectorAll('#delete-post')
+  let postContent2 = document.getElementById('post-content')
+  let postForm2 = document.getElementById('create-post-form')
+
+
+  postButton2.addEventListener('click', event => popup2.style.display = 'flex')
+  closePost2.addEventListener('click', event => popup2.style.display = 'none')
+
+  postForm2.addEventListener('submit', event => {
+    const postPattern = /^\s*\S.*\s*$/
+    if (postPattern.test(postContent2.value)) {
+      successPopup.style.display = 'flex'
+      successHeader.innerText = 'Post successfully made'
+    } else {
+      event.preventDefault()
+      successPopup.style.display = 'flex'
+      successHeader.innerText = 'Post must not be empty'
+    }
+  })
+
+  deletePost2.forEach(deleteButton2 => deleteButton2.addEventListener('click', event => {
+    successPopup.style.display = 'flex'
+    successHeader.innerText = 'Post successfully deleted'
+  }))
+</script>
+<% } %>
+  <%- include('partials/footer.ejs') %>
+</body>
+</html>

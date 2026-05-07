@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE trainerSession [  
+<!ELEMENT trainerSession (id, sessionDate, sessionTime, trainerId, activity, location)>
+<!ELEMENT id (#PCDATA)>
+<!ELEMENT sessionDate (#PCDATA)>
+<!ELEMENT sessionTime (#PCDATA)>
+<!ELEMENT trainerId (#PCDATA)>
+<!ELEMENT activity (activityId, activityName, activityDescription)>
+<!ELEMENT activityId (#PCDATA)>
+<!ELEMENT activityName (#PCDATA)>
+<!ELEMENT activityDescription (#PCDATA)>
+<!ELEMENT location (locationId, locationTitle, locationAddress)>
+<!ELEMENT locationId (#PCDATA)>
+<!ELEMENT locationTitle (#PCDATA)>
+<!ELEMENT locationAddress (#PCDATA)> 
+]>
+<trainerSession>
+    <id>31</id>
+    <sessionDate>2025-12-04</sessionDate>
+    <sessionTime>17:00:00</sessionTime>
+    <trainerId>51</trainerId>
+    <activity>
+      <activityId>3</activityId>
+      <activityName>Boxing</activityName>
+      <activityDescription>An awesome combat sport that only allows for punches</activityDescription>
+    </activity>
+    <location>
+      <locationId>3</locationId>
+      <locationTitle>Chermside High Street Gym</locationTitle>
+      <locationAddress>53 Barnsley Street, Chermside 3584</locationAddress>
+    </location>
+  </trainerSession>
+  

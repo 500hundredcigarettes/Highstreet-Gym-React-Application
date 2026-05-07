@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE bookings [
+<!ELEMENT bookings (booking*)>
+<!ELEMENT booking (id, userId, session)>
+<!ELEMENT id (#PCDATA)>
+<!ELEMENT userId (#PCDATA)>
+<!ELEMENT session (sessionId, sessionDate, sessionTime, activity)>
+<!ELEMENT sessionId (#PCDATA)>
+<!ELEMENT sessionDate (#PCDATA)>
+<!ELEMENT sessionTime (#PCDATA)>
+<!ELEMENT sessionDate (#PCDATA)>
+<!ELEMENT activity (activityId, activityName, activityDescription)>
+<!ELEMENT activityId (#PCDATA)>
+<!ELEMENT activityName (#PCDATA)>
+<!ELEMENT activityDescription (#PCDATA)>
+]>
+<bookings>
+<% for (const booking of userBookings) { %>
+	<booking>
+		<id><%= booking.id  %></id>
+		<userId><%= booking.userId.id %></userId>
+		<session>
+			<sessionId><%= booking.sessionId.id %></sessionId>
+			<sessionDate><%= booking.sessionId.sessionDate %></sessionDate>
+			<sessionTime><%= booking.sessionId.sessionTime %></sessionTime>
+			<activity>
+				<activityId><%= booking.sessionId.activityId.id %></activityId>
+				<activityName><%= booking.sessionId.activityId.activityName %></activityName>
+				<activityDescription><%= booking.sessionId.activityId.activityDescription %></activityDescription>
+			</activity>
+		</session>
+	</booking>
+<% } %>
+</bookings>

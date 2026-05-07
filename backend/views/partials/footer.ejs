@@ -1,0 +1,32 @@
+<footer>
+  <a href="/sessions">
+    <img src="/img/calender-icon.svg" alt="calender-icon">
+    <p>Schedule</p>
+  </a>
+  <a href="/bookings">
+    <img src="/img/list-icon.svg" alt="list-icon">
+    <p>Bookings</p>
+  </a>
+  <a href="/profile">
+    <img src="/img/profile-icon.svg" alt="profile-icon">
+    <p>Profile</p>
+  </a>
+  <a href="/posts">
+    <img src="/img/blog-icon.svg" alt="blog-icon">
+    <p>Blog</p>
+  </a>
+</footer>
+
+<script>
+  let currentUrl = window.location.href
+  document.addEventListener('DOMContentLoaded', () => {
+    let navButtons = [...document.querySelectorAll('footer a')]
+    navButtons.find(button => {
+      if (currentUrl.includes(button.pathname)) {
+        console.log(button)
+        button.style.backgroundColor = 'rgba(255, 255, 255, 0.3)'
+      }
+    })
+  })
+</script>
+

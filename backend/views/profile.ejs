@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <% if (user.role == 'Admin') { %>
+    <link rel="stylesheet" href="/css/admin.css">
+  <% } else { %>
+    <link rel="stylesheet" href="/css/main.css">
+  <% } %>
+  <title>Profile</title>
+</head>
+<body>
+
+  <%- include('partials/header.ejs') %>
+
+  <% if (user && !selectedUser) { %>
+    <% if (user && user.gymId) { %>
+    <section id="profile-block">
+      <h2>Name</h2>
+      <p><%= user.firstName %> <%= user.lastName %></p>
+      
+      <h2>Email</h2>
+      <p><%= user.email %></p>
+      
+      <h2>Address</h2>
+      <p><%= user.address %></p>
+      
+      <h2>Phone Number</h2>    
+      <p><%= user.phoneNumber %></p>
+      
+      <h2>Gym</h2>
+      <p><%= user.gymId.locationTitle %></p>
+    </section>
+    <% } else { %>
+      <h1 style="text-align: center; margin: 5%;">Please log in to view your profile details or if you don't have an account, sign up for one today!</h1>
+    <% } %>    
+  <% } else if (user && user.role =='Admin' && selectedUser) { %>
+    <h1 id="profile-header" style="text-align: center;"> Editing <%= selectedUser.firstName%> <%= selectedUser.lastName %></h1>
+      <form
+      action="/profile/<%= selectedUser.id  %>"
+      method="post"
+      class="form-grid"
+      id="profile-form"
+      novalidate
+      >
+        <label for="first-name">First Name:</label>
+        <input type="text" name="firstName" id="first-name" value="<%= selectedUser.firstName %>" required pattern="^[a-zA-Z0-9]+$" />
+        <span class="error-message" id="first-name-error"></span>
+
+        <label for="last-name">Last Name:</label>
+        <input type="text" name="lastName" id="last-name" value="<%= selectedUser.lastName %>" required pattern="^[a-zA-Z0-9]+$"/>
+        <span class="error-message" id="last-name-error"></span>
+
+        
+        <label for="role">Role:</label>
+        <select name="role" id="role">
+          <option value="Admin" <%= selectedUser.role == "Admin"? "selected" : ""%> >Admin</option>
+          <option value="Trainer" <%= selectedUser.role == "Trainer"? "selected" : ""%> >Trainer</option>
+          <option value="Member" <%= selectedUser.role == "Member"? "selected" : ""%> >Member</option>
+        </select>
+        
+        <h2>Email:</h2>
+        <p><%= selectedUser.email %></p>
+
+        <label for="password">Password:</label>
+        <input type="password" name="password" placeholder="Leave empty to retain user's existing password" id="password" pattern="(^$|^\S{6,}$)"/>
+        <span class="error-message" id="password-error"></span>
+        
+        <label for="address">Address:</label>
+        <input type="text" name="address" id="address" value="<%= selectedUser.address %>" pattern="^[a-zA-Z0-9\s]+$" 
+        title="Address can only contain letters, numbers, and spaces" required/>
+        <span class="error-message" id="address-error"></span>
+
+        <label for="phone-number">Phone Number:</label>
+        <input type="text" name="phoneNumber" id="phone-number" value="<%= selectedUser.phoneNumber %>" pattern="^[0-9]+$" 
+        title="Phone Number can only contain numbers" minlength="10" required/>
+        <span class="error-message" id="phone-number-error"></span>
+
+        <label for="gym">Selected gym:</label>
+          <select name="gym" id="gym">
+        <% for(const gym of gyms) { %>
+          <option value="<%= gym.id || gym.locationTitle %>"
+            <%= (selectedUser.gymId && selectedUser.gymId.locationTitle == gym.locationTitle) || 
+                (selectedUser.gymId == gym.id) ? "selected" : "" %>
+          > 
+            <%= gym.locationTitle %>
+          </option>  
+        <% } %>
+      </select>
+
+    <section id="profile-button-row">
+      <button id="update-profile-button" name="action" value="update">Update</button>
+      
+      <button id="delete-profile-button" name="action" value="delete">Delete</button>
+    </section>      
+      <%- include('partials/success_status.ejs') %>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        function renderSuccessPopup(values) {
+          successPopup.style.display = 'flex'
+          successHeader.innerText = `${values}d user: <%= selectedUser.firstName %> <%= selectedUser.lastName %> successfully`
+          confirmPopupSuccess.addEventListener('click', event => window.location.href = "/admin")
+        }
+      const form = document.getElementById('profile-form')
+      form.addEventListener('submit', event => {
+        const allInputs = form.querySelectorAll('input, select');
+        if (!form.checkValidity()) {
+          event.preventDefault()
+          event.stopPropagation()
+          allInputs.forEach(input => {
+            if (!input.checkValidity()) {
+              input.classList.add('invalid')
+              displayValidationError(input)
+            } else {
+              input.classList.remove('invalid')
+              const errorElement = document.getElementById(`${input.id}-error`)
+              if (errorElement) {
+                errorElement.textContent = ''
+              }
+            }
+          })
+        } else {
+          let profileAction = event.submitter.value 
+          renderSuccessPopup(profileAction.charAt(0).toUpperCase() + profileAction.slice(1))
+        }
+      })
+      
+      function displayValidationError(input) {
+        const errorElement = document.getElementById(`${input.id}-error`)
+        if (!errorElement) return
+        
+        if (input.validity.valueMissing) {
+          errorElement.textContent = 'This field is required'
+        } else if (input.validity.typeMismatch) {
+          errorElement.textContent = 'Please enter a valid value'
+        } else if (input.validity.patternMismatch) {
+          errorElement.textContent = input.title || 'Invalid format'
+        } else if (input.validity.tooShort) {
+          errorElement.textContent = `Value should be at least ${input.minLength} characters`
+        } else {
+          errorElement.textContent = 'Invalid value'
+        }  
+      }
+      form.addEventListener('keypress', event => {
+        if (event.key === 'Enter') {
+          const submitEvent = new Event('submit', { cancelable: true })
+          form.dispatchEvent(submitEvent)
+        }
+      })
+    })
+    </script>
+  <% } %>
+  </form>
+    <%- include('partials/footer.ejs') %>
+</body>
+</html>
+
+

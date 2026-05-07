@@ -1,0 +1,61 @@
+<style>
+  #success-popup{
+    z-index: 100;
+    background-color: rgba(1, 4, 15, 0.596); 
+    display: none; 
+    position: fixed; 
+    top: 0px; 
+    left: 0px; 
+    bottom: 0px;
+    right: 0px; 
+    width: 100%;
+    align-items: center; 
+    justify-content: center;
+    flex-direction: column;
+  }
+
+  #popup-background {
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    width: 80%;
+    padding: 10% 0%;
+    align-items: center; 
+    justify-content: center;
+  }
+
+  #success-header {
+    color: #1F4D7C;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bolder;
+    background-color: aliceblue;
+    text-align: center;
+    border-radius: 10px;
+    margin: 8%;
+    padding: 2%;
+  }
+
+  #confirm-popup-success {
+    padding: 10px;
+    margin: 0% 4%;
+    background-color: #1F4D7C;
+    border-radius: 10px;
+    font-size: 20px;
+    font-weight: bold;
+  }
+</style>
+
+<section id="success-popup">
+  <section id="popup-background">
+    <h2 id="success-header"></h2>
+    <a id="confirm-popup-success">Confirm</a>
+  </section>
+</section>
+
+<script>
+  let successPopup = document.getElementById('success-popup')
+  let confirmPopupSuccess = document.getElementById('confirm-popup-success')
+  let successHeader = document.getElementById('success-header')
+
+  confirmPopupSuccess.addEventListener('click', event => window.location.reload())
+</script>

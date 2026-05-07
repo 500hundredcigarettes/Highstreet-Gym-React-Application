@@ -1,0 +1,39 @@
+<style>
+    #error-popup{
+    background-color: rgba(1, 4, 15, 0.596); 
+    display: none; 
+    position: fixed; 
+    top: 50px; 
+    left: 0px; 
+    bottom: 0px;
+    right: 0px; 
+    align-items: center; 
+    justify-content: center;
+  }
+
+  #error-header {
+    color: white;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+  }
+
+  #confirm-popup-error {
+    padding: 50px;
+  }
+</style>
+
+<section id="error-popup">
+    <article>
+      <h2 id="error-header"></h2>
+      <p id="subtext"></p>
+      <button id="confirm-popup-error">Confirm</button>
+    </article>
+</section>
+
+<script>
+  let errorPopup = document.getElementById('error-popup')
+  let confirmPopupError = document.getElementById('confirm-popup-error')
+  let errorHeader = document.getElementById('error-header')
+
+  confirmPopupError.addEventListener('click', event => window.location.reload())
+</script>

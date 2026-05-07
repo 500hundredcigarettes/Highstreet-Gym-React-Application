@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/css/main.css">
+  <title>Signup</title>
+  <style>
+    input:valid {
+      border-color: #4CAF50; 
+    }
+
+    input.invalid {
+      border-color: #ff3860; 
+    }
+
+    .error-message {
+      color: #ff3860;
+      display: block;
+    }
+
+    #signup-header {
+      margin-left: 5%;
+    }
+
+    #welcome-header {
+      margin-top: 0%;
+    }
+  </style>
+</head>
+
+<body>
+  <h1 id="welcome-header">Welcome to High Street Fitness</h1>
+  <h2 id="signup-header">Signup today!</h2>
+
+  <form action="/authenticate/signup" method="post" id="signup-form" novalidate>
+    <label for="first-name">First Name:</label>
+    <input type="text" name="firstName" id="first-name" required pattern="^[a-zA-Z0-9]+$" />
+    <span class="error-message" id="first-name-error"></span>
+
+    <label for="last-name">Last Name:</label>
+    <input type="text" name="lastName" id="last-name" required pattern="^[a-zA-Z0-9]+$"/>
+    <span class="error-message" id="last-name-error"></span>
+    
+    <label for="password">Password:</label>
+    <input type="password" name="password" id="password" required minlength="6"/>
+    <span class="error-message" id="password-error"></span>
+    
+    <label for="confirm-password">Confirm password:</label>
+    <input type="password" name="confirmPassword" id="confirm-password" required/>
+    <span class="error-message" id="confirm-password-error"></span>
+    
+    <label for="email">Email:</label>
+    <input type="email" name="email" id="email" 
+    pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" 
+    title="Please enter a valid email address" required/>
+    <span class="error-message" id="email-error"></span>
+
+    <label for="address">Address:</label>
+    <input type="text" name="address" id="address" pattern="^[a-zA-Z0-9\s]+$" 
+    title="Address can only contain letters, numbers, and spaces" required/>
+    <span class="error-message" id="address-error"></span>
+
+    <label for="phone-number">Phone Number:</label>
+    <input type="text" name="phoneNumber" id="phone-number" pattern="^[0-9]+$" 
+    title="Phone Number can only contain numbers" minlength="10" required/>
+    <span class="error-message" id="phone-number-error"></span>
+
+    <label for="gym">Select Gym:</label>
+    <select name="gym" id="gym" required>
+      <% for (const gym of gyms) { %>
+        <option value="<%= gym.locationTitle %>"><%= gym.locationTitle  %></option>
+      <% } %>
+    </select>
+    <span class="error-message" id="gym-error"></span>
+
+    <section id="button-row">  
+      <a id="cancel-signup" href="/authenticate">Cancel</a>
+      <input type="submit" value="Signup" id="signup-button"/>
+    </section>
+  </form>
+
+  <%- include('partials/success_status.ejs') %>
+
+  <script>
+    function renderSuccessPopup() {
+      successPopup.style.display = 'flex'
+      successHeader.innerText = `Your account has been created, welcome to High Street Fitness!`
+      confirmPopupSuccess.addEventListener('click', event => window.location.href=`/authenticate`)
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('signup-form')
+      const password = document.getElementById('password')
+      const confirmPassword = document.getElementById('confirm-password')
+      confirmPassword.addEventListener('input', () => {
+        if (password.value !== confirmPassword.value) {
+          this.setCustomValidity("Passwords don't match")
+        } else {
+          this.setCustomValidity('')
+        }
+      })
+      
+      form.addEventListener('submit', event => {
+        if (!form.checkValidity()) {
+          event.preventDefault()
+          event.stopPropagation()
+          const allInputs = form.querySelectorAll('input, select');
+          allInputs.forEach(input => {
+            if (!input.checkValidity()) {
+              input.classList.add('invalid')
+              displayValidationError(input)
+            } else {
+              input.classList.remove('invalid')
+              const errorElement = document.getElementById(`${input.id}-error`)
+              if (errorElement) {
+                errorElement.textContent = ''
+              }
+            }
+          })
+          if (password.value !== confirmPassword.value) {
+            confirmPassword.classList.add('invalid')
+            document.getElementById('confirm-password-error').textContent = 
+              "Passwords don't match"
+            event.preventDefault()
+          }
+        } else if (password.value !== confirmPassword.value) {
+          event.preventDefault()
+          confirmPassword.classList.add('invalid')
+          document.getElementById('confirm-password-error').textContent = 
+            "Passwords don't match"
+        } else {
+          renderSuccessPopup()
+        }
+      })
+      
+      function displayValidationError(input) {
+        const errorElement = document.getElementById(`${input.id}-error`)
+        if (!errorElement) return
+        
+        if (input.validity.valueMissing) {
+          errorElement.textContent = 'This field is required'
+        } else if (input.validity.typeMismatch) {
+          errorElement.textContent = 'Please enter a valid value'
+        } else if (input.validity.patternMismatch) {
+          errorElement.textContent = input.title || 'Invalid format'
+        } else if (input.validity.tooShort) {
+          errorElement.textContent = `Value should be at least ${input.minLength} characters`
+        } else {
+          errorElement.textContent = 'Invalid value'
+        }  
+      }
+      // Handle Enter key press in form fields
+      form.addEventListener('keypress', event => {
+        if (event.key === 'Enter') {
+          const submitEvent = new Event('submit', { cancelable: true })
+          form.dispatchEvent(submitEvent)
+        }
+      })
+    })
+  </script>
+</body>
+</html>

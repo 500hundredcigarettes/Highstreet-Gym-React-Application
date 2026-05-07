@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/main.css">
+    <title>Log in</title>
+  </head>
+  <body>
+    <%- include('partials/header.ejs') %>
+    <h1 id="welcome-header">Welcome to High Street Fitness</h1>
+    <h2 id="login-header">Login</h2>
+      <section>
+        <form
+          id="authenticate-block"
+          action="/authenticate"
+          method="post"
+        >
+          <label for="email">Email:</label>
+          <input type="text" name="email" id="email" />
+          <label for="password">Password:</label>
+          <input type="password" name="password" id="password" />
+          <a id="signup-redirect" href="/authenticate/signup">Signup</a>
+          <input id="login-button" type="submit" value="Confirm" />
+        </form>
+      </section>
+    <%- include('partials/footer.ejs') %>
+  </body>
+</html>

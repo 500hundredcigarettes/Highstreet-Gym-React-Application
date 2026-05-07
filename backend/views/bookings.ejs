@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <% if (user && user.role == 'Admin') { %>
+    <link rel="stylesheet" href="/css/admin.css">
+  <% } else { %>
+    <link rel="stylesheet" href="/css/main.css">
+  <% } %>
+  <title>Your bookings</title>
+</head>
+<body>
+  <%- include('partials/header.ejs') %>
+
+  <h1 id="booking-header" style="text-align: center;">
+    <% if (user && user.role == 'Admin' && selectedUser) { %>
+      Bookings for <%= selectedUser.firstName %> <%= selectedUser.lastName %>
+      <button id="create-booking-button" onclick="createBookingPopup()">Create New Booking</button>
+    <% } else if (user !== 'Guest' && user.role !== 'Trainer') { %>
+      Your Bookings
+    <% } %>
+  </h1>
+  
+  <% if (user == "Guest") { %>
+    <h1 style="margin: 0% 5%; text-align: center;">Please signup or log in to view your bookings.</h1>
+   <% } else if (user.role == "Trainer") { %>
+    <h1 style="margin: 0% 5%; text-align: center;">The bookings page is unavaliable for trainer users.</h1>
+    <%} else { %>
+    <section style="text-align: center;">
+      <p style="font-size: 17px;" id="timetable-header">
+        Bookings from: <span id="date-between" style="text-decoration: underline;">Select a week</span>
+      </p>
+      <form style="display: block;" id="week-form">
+        <label for="week"></label>
+        <input type="week" name="week" id="week" 
+          min="2025-W44" 
+          max="2026-W44"
+        />
+        <label for="activity-filter">Filter by activity:</label>
+        <select name="activity" id="activity-filter">
+          <option value="">All Activities</option>
+          <% 
+            const activities = [...new Set(userBookings.map(booking => booking.sessionId.activityId.activityName))];
+            activities.forEach(activity => { %>
+              <option value="<%= activity %>"><%= activity %></option>
+          <% }) %>
+        </select>
+      </form>
+    </section>
+  <% } %> 
+
+  <% for (const booking of userBookings) { %>
+    <% 
+      let rawDate = booking.sessionId.sessionDate + '';
+      let getMonth = new Date(rawDate).getMonth() + 1;
+      let formattedDateArray = rawDate.slice(0, 10).split(" ");
+      let formattedSessionDate = formattedDateArray[0] + " " + `${formattedDateArray[2]}/` + `${getMonth}`;
+    %>
+    <section id="all-bookings" data-date="<%= booking.sessionId.sessionDate %>" data-activity="<%= booking.sessionId.activityId.activityName %>">
+      <% if (user && user.role == 'Trainer' && !selectedUser) { %>
+        <section id="trainer-activity-row">
+          <p>
+            <%= booking.sessionId.activityId.activityName %>
+          </p>
+        </section>
+        <section id="location-date-row">
+          <p id="booking-location"><%= booking.sessionId.locationId.locationTitle.replace(" High Street Gym", "") %></p>
+          <p id="booking-date"><%= formattedSessionDate %> <%= booking.sessionId.sessionTime %></p>
+          <form action="/bookings/delete" method="post">
+            <button onclick="renderSuccessPopup()" id="delete-booking" name="deleteId" value="<%= booking.id %>"><img src="/img/delete-icon.png" alt="delete"></button>
+          </form>
+        </section>        
+      <% } else if (user && !selectedUser) { %>
+        <section id="trainer-activity-row">
+          <p>
+            <%= booking.sessionId.activityId.activityName %>
+            <%= booking.sessionId.trainerId.firstName %> 
+            <%= booking.sessionId.trainerId.lastName %>
+          </p>
+        </section>
+        <section id="location-date-row">
+          <p id="booking-location"><%= booking.sessionId.locationId.locationTitle.replace(" High Street Gym", "") %></p>
+          <p id="booking-date"><%= formattedSessionDate %> <%= booking.sessionId.sessionTime %></p>
+          <form action="/bookings/delete" method="post">
+            <button onclick="renderSuccessPopup()" id="delete-booking" name="deleteId" value="<%= booking.id %>"><img src="/img/delete-icon.png" alt="delete"></button>
+          </form>
+        </section>
+      <% } else if (user && user.role == 'Admin' && selectedUser) { %>
+        <section id="trainer-activity-row">
+          <p>
+            <%= booking.sessionId.activityId.activityName %> -
+            <%= booking.sessionId.trainerId.firstName %> 
+            <%= booking.sessionId.trainerId.lastName %>
+          </p>
+          <button class="edit-booking" id="<%= booking.id %>" onclick="editBookingPopup('<%= booking.id %>')">Change</button>
+        </section>
+        <section id="location-date-row">
+          <p id="booking-location"><%= booking.sessionId.locationId.locationTitle.replace(" High Street Gym", "") %></p>
+          <p id="booking-date"><%= formattedSessionDate %> <%= booking.sessionId.sessionTime %></p>
+          <form action="/bookings/delete" method="post">
+            <button onclick="renderSuccessPopup()" id="delete-booking" name="deleteId" value="<%= booking.id %>"><img src="/img/delete-icon.png" alt="delete"></button>
+          </form>
+        </section>
+      <% } %>
+    </section>
+  <% } %>
+
+  <% if (user && user.role == 'Admin' && selectedUser) { %>
+    <dialog id="change-booking-popup">
+      <a id="close-booking-popup" style="text-align: right;" onclick="document.getElementById('change-booking-popup').close()"><img src="/img/delete-icon.png" alt="delete"></a>
+      <p style="font-size: 17px;" id="timetable-header">
+        Timetable for: <span id="popup-date-between" style="text-decoration: underline;">Select a week</span>
+      </p>
+
+      <section style="display: inline;" id="popup-week-form">
+        <label for="popup-week"></label>
+        <input type="week" name="week" id="popup-week" 
+          min="2025-W44" 
+          max="2026-W44"
+        />
+      </section>
+
+      <p><%= selectMessage %></p>
+
+      <section id="days-block">
+        <section id="monday">Mo</section>
+        <section id="tuesday">Tu</section>
+        <section id="wednesday">We</section>
+        <section id="thursday">Th</section>
+        <section id="friday">Fr</section>
+        <section id="saturday">Sa</section>
+        <section id="sunday">Su</section>
+      </section>
+
+      <% for(const session of allSessions) { %>
+        <% 
+          let rawDate = session.sessionDate + '';
+          let formattedSessionDate = rawDate.slice(4, 10).split(/\b/).reverse();
+        %>
+        <form action="/bookings/<%= selectedUser.id %>" method="post">
+          <input type="hidden" name="formAction" value="update">
+          <input id="hidden-booking-id" type="hidden" name="bookingId" value="">
+          <section id="update-session-block" 
+            data-day="<%= new Date(session.sessionDate).getDay() %>" 
+            data-date="<%= session.sessionDate %>"
+            data-activity="<%= session.activityId.activityName %>">
+            <p id="activity-name"><%= session.activityId.activityName %></p>
+            <p><%= session.sessionTime %></p>
+            <p id="session-date"><%= formattedSessionDate[0] + ' ' + formattedSessionDate[2] %></p>
+            <p><%= session.trainerId.firstName %> <%= session.trainerId.lastName %></p>
+            <p><%= session.locationId.locationTitle %></p>
+            <button name="updatedSessionId" value="<%= session.id %>" id="book-button">Confirm</button>
+          </section>
+        </form>
+      <% } %>
+    </dialog>
+
+    <dialog id="create-booking-popup">
+      <a id="close-booking-popup" style="text-align: right;" onclick="document.getElementById('create-booking-popup').close()"><img src="/img/delete-icon.png" alt="delete"></a>
+      <p style="font-size: 17px;" id="timetable-header">
+        Create Booking for: <span id="create-popup-date-between" style="text-decoration: underline;">Select a week</span>
+      </p>
+
+      <section style="display: inline;" id="create-popup-week-form">
+        <label for="create-popup-week"></label>
+        <input type="week" name="week" id="create-popup-week" 
+          min="2025-W44" 
+          max="2026-W44"
+        />
+      </section>
+
+      <p>Select a session to create a new booking</p>
+
+      <section id="days-block">
+        <section id="monday">Mo</section>
+        <section id="tuesday">Tu</section>
+        <section id="wednesday">We</section>
+        <section id="thursday">Th</section>
+        <section id="friday">Fr</section>
+        <section id="saturday">Sa</section>
+        <section id="sunday">Su</section>
+      </section>
+
+      <% for(const session of allSessions) { %>
+        <% 
+          let rawDate = session.sessionDate + '';
+          let formattedSessionDate = rawDate.slice(4, 10).split(/\b/).reverse();
+        %>
+        <form action="/bookings/<%= selectedUser.id %>" method="post">
+          <input type="hidden" name="formAction" value="create">
+          <section id="create-session-block" 
+            data-day="<%= new Date(session.sessionDate).getDay() %>" 
+            data-date="<%= session.sessionDate %>"
+            data-activity="<%= session.activityId.activityName %>">
+            <p id="activity-name"><%= session.activityId.activityName %></p>
+            <p><%= session.sessionTime %></p>
+            <p id="session-date"><%= formattedSessionDate[0] + ' ' + formattedSessionDate[2] %></p>
+            <p><%= session.trainerId.firstName %> <%= session.trainerId.lastName %></p>
+            <p><%= session.locationId.locationTitle %></p>
+            <button name="sessionId" value="<%= session.id %>" id="book-button">Confirm</button>
+          </section>
+        </form>
+      <% } %>
+       </dialog>
+  <% } %>
+   
+  <%- include('partials/footer.ejs') %>
+  <%- include('partials/success_status.ejs') %>
+
+  <script>
+    confirmPopupSuccess.addEventListener('click', event => {
+      successPopup.style.display = 'none';
+      window.location.reload();
+    });
+
+    function renderSuccessPopup() {
+      successPopup.style.display = 'flex';
+      successHeader.innerText = `Booking deleted`;
+    }
+
+    // Function to parse week input and calculate week range
+    function getWeekRange(weekValue) {
+      if (!weekValue) return null;
+      const [year, week] = weekValue.split('-W').map(Number);
+      const jan1 = new Date(year, 0, 1);
+      const firstMonday = new Date(jan1);
+      while (firstMonday.getDay() !== 1) {
+        firstMonday.setDate(firstMonday.getDate() + 1);
+      }
+      const weekStart = new Date(firstMonday);
+      weekStart.setDate(firstMonday.getDate() + (week - 2) * 7);
+      const weekEnd = new Date(weekStart);
+      weekEnd.setDate(weekStart.getDate() + 6);
+      return { start: weekStart, end: weekEnd };
+    }
+
+    // Function to check if a date is within the selected week
+    function isDateInWeek(sessionDate, weekStart, weekEnd) {
+      const date = new Date(sessionDate);
+      return date >= weekStart && date <= weekEnd;
+    }
+
+    // Function to update week display
+    function updateWeekDisplay(inputId, displayId) {
+      const weekInput = document.getElementById(inputId);
+      const dateBetween = document.getElementById(displayId);
+      const weekValue = weekInput.value;
+      const weekRange = getWeekRange(weekValue);
+      if (weekRange) {
+        const startDate = weekRange.start.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit' });
+        const endDate = weekRange.end.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' });
+        dateBetween.innerText = `${startDate} - ${endDate}`;
+        return weekRange.start;
+      } else {
+        dateBetween.innerText = 'Select a week';
+        return null;
+      }
+    }
+
+    // Updated filter function to handle both week and activity
+    function filterBookings(selectedWeekStart, selectedActivity, bookings) {
+      if (!selectedWeekStart && !selectedActivity) {
+        bookings.forEach(booking => booking.style.display = 'block');
+        return;
+      }
+      const weekEnd = selectedWeekStart ? new Date(selectedWeekStart) : null;
+      if (weekEnd) weekEnd.setDate(selectedWeekStart.getDate() + 6);
+      
+      bookings.forEach(element => {
+        const sessionDate = new Date(element.getAttribute('data-date'));
+        const activity = element.getAttribute('data-activity');
+        
+        const passesWeekFilter = !selectedWeekStart || isDateInWeek(sessionDate, selectedWeekStart, weekEnd);
+        const passesActivityFilter = !selectedActivity || activity === selectedActivity;
+        
+        element.style.display = passesWeekFilter && passesActivityFilter ? 'block' : 'none';
+      });
+    }
+
+    '<% if (user) { %>'
+      document.addEventListener('DOMContentLoaded', () => {
+        const weekInput = document.getElementById('week');
+        const activityFilter = document.getElementById('activity-filter');
+        const bookings = document.querySelectorAll('#all-bookings');
+
+        let selectedWeekStart = updateWeekDisplay('week', 'date-between');
+        let selectedActivity = activityFilter.value;
+
+        weekInput.addEventListener('change', () => {
+          selectedWeekStart = updateWeekDisplay('week', 'date-between');
+          filterBookings(selectedWeekStart, selectedActivity, bookings);
+        });
+
+        activityFilter.addEventListener('change', () => {
+          selectedActivity = activityFilter.value;
+          filterBookings(selectedWeekStart, selectedActivity, bookings);
+        });
+      });
+    '<% } %>'
+
+    '<% if (user && user.role == "Admin" && selectedUser) { %>'
+      const dayMap = {
+        'sunday': 0,
+        'monday': 1,
+        'tuesday': 2,
+        'wednesday': 3,
+        'thursday': 4,
+        'friday': 5,
+        'saturday': 6,
+        'create-sunday': 0,
+        'create-monday': 1,
+        'create-tuesday': 2,
+        'create-wednesday': 3,
+        'create-thursday': 4,
+        'create-friday': 5,
+        'create-saturday': 6
+      };
+
+      let currentSelectedDay = null;
+      let selectedDayNum = null;
+      let selectedWeekStart = null;
+      let currentCreateSelectedDay = null;
+      let createSelectedDayNum = null;
+      let createSelectedWeekStart = null;
+
+      function editBookingPopup(bookingId) {
+        document.getElementById('change-booking-popup').showModal();
+        let hiddenBookingIds = document.querySelectorAll('#change-booking-popup > form > #hidden-booking-id');
+        hiddenBookingIds.forEach(hiddenInput => hiddenInput.value = bookingId);
+        let confirmUpdate = document.querySelectorAll('#change-booking-popup #book-button');
+        confirmUpdate.forEach(updateButton => updateButton.addEventListener('click', () => {
+          document.getElementById('change-booking-popup').close();
+          successPopup.style.display = 'flex';
+          successHeader.innerText = 'Booking updated';
+        }));
+        // Set default week for popup if none is selected
+        const popupWeekInput = document.getElementById('popup-week');
+        if (!popupWeekInput.value) {
+          popupWeekInput.value = '2025-W44';
+        }
+        selectedWeekStart = updateWeekDisplay('popup-week', 'popup-date-between');
+        filterSessions('update-session-block', selectedWeekStart, selectedDayNum);
+      }
+
+      function createBookingPopup() {
+        document.getElementById('create-booking-popup').showModal();
+        let confirmCreate = document.querySelectorAll('#create-booking-popup #book-button');
+        confirmCreate.forEach(createButton => createButton.addEventListener('click', () => {
+          document.getElementById('create-booking-popup').close();
+          successPopup.style.display = 'flex';
+          successHeader.innerText = 'Booking created';
+        }));
+        // Set default week for create popup if none is selected
+        const createPopupWeekInput = document.getElementById('create-popup-week');
+        if (!createPopupWeekInput.value) {
+          createPopupWeekInput.value = '2025-W44';
+        }
+        createSelectedWeekStart = updateWeekDisplay('create-popup-week', 'create-popup-date-between');
+        filterSessions('create-session-block', createSelectedWeekStart, createSelectedDayNum);
+      }
+
+      // Function to filter sessions by week and day for both popups
+      function filterSessions(blockId, weekStart, dayNum) {
+        const sessions = document.querySelectorAll(`#${blockId}`);
+        sessions.forEach(session => {
+          let show = true;
+          const sessionDay = parseInt(session.getAttribute('data-day'));
+          const sessionDate = new Date(session.getAttribute('data-date'));
+
+          // Check if session is within the selected week
+          if (weekStart) {
+            const weekEnd = new Date(weekStart);
+            weekEnd.setDate(weekStart.getDate() + 6);
+            if (!isDateInWeek(sessionDate, weekStart, weekEnd)) {
+              show = false;
+            }
+          }
+
+          // Apply day filter if selected
+          if (dayNum !== null && sessionDay !== dayNum) {
+            show = false;
+          }
+
+          session.style.display = show ? 'grid' : 'none';
+        });
+      }
+
+      document.addEventListener('DOMContentLoaded', () => {
+        // Update Booking Popup Logic
+        const weekInput = document.getElementById('popup-week');
+        selectedWeekStart = updateWeekDisplay('popup-week', 'popup-date-between');
+        weekInput.addEventListener('change', () => {
+          selectedWeekStart = updateWeekDisplay('popup-week', 'popup-date-between');
+          filterSessions('update-session-block', selectedWeekStart, selectedDayNum);
+        });
+        weekInput.addEventListener('blur', () => {
+          if (currentSelectedDay) {
+            currentSelectedDay.style.border = 'none';
+            currentSelectedDay = null;
+            selectedDayNum = null;
+          }
+          filterSessions('update-session-block', selectedWeekStart, selectedDayNum);
+        });
+        const renderSessionByDays = document.querySelectorAll('#days-block > section');
+        renderSessionByDays.forEach(day => {
+          day.addEventListener('click', () => {
+            if (currentSelectedDay) {
+              currentSelectedDay.style.border = 'none';
+            }
+            day.style.border = '2px solid #1F4D7C';
+            currentSelectedDay = day;
+            const dayId = day.id;
+            selectedDayNum = dayMap[dayId];
+            filterSessions('update-session-block', selectedWeekStart, selectedDayNum);
+          });
+        });
+
+        // Create Booking Popup Logic
+        const createWeekInput = document.getElementById('create-popup-week');
+        createSelectedWeekStart = updateWeekDisplay('create-popup-week', 'create-popup-date-between');
+        createWeekInput.addEventListener('change', () => {
+          createSelectedWeekStart = updateWeekDisplay('create-popup-week', 'create-popup-date-between');
+          filterSessions('create-session-block', createSelectedWeekStart, createSelectedDayNum);
+        });
+        createWeekInput.addEventListener('blur', () => {
+          if (currentCreateSelectedDay) {
+            currentCreateSelectedDay.style.border = 'none';
+            currentCreateSelectedDay = null;
+            createSelectedDayNum = null;
+          }
+          filterSessions('create-session-block', createSelectedWeekStart, createSelectedDayNum);
+        });
+        const renderCreateSessionByDays = document.querySelectorAll('#create-days-block > section');
+        renderCreateSessionByDays.forEach(day => {
+          day.addEventListener('click', () => {
+            if (currentCreateSelectedDay) {
+              currentCreateSelectedDay.style.border = 'none';
+            }
+            day.style.border = '2px solid #1F4D7C';
+            currentCreateSelectedDay = day;
+            const dayId = day.id;
+            createSelectedDayNum = dayMap[dayId];
+            filterSessions('create-session-block', createSelectedWeekStart, createSelectedDayNum);
+          });
+        });
+      });
+    '<% } %>'
+  </script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE trainerSessions [  
+<!ELEMENT trainerSessions (trainerSession*)>
+<!ELEMENT trainerSession (id, sessionDate, sessionTime, trainerId, activity, location)>
+<!ELEMENT id (#PCDATA)>
+<!ELEMENT sessionDate (#PCDATA)>
+<!ELEMENT sessionTime (#PCDATA)>
+<!ELEMENT trainerId (#PCDATA)>
+<!ELEMENT activity (activityId, activityName, activityDescription)>
+<!ELEMENT activityId (#PCDATA)>
+<!ELEMENT activityName (#PCDATA)>
+<!ELEMENT activityDescription (#PCDATA)>
+<!ELEMENT location (locationId, locationTitle, locationAddress)>
+<!ELEMENT locationId (#PCDATA)>
+<!ELEMENT locationTitle (#PCDATA)>
+<!ELEMENT locationAddress (#PCDATA)> 
+]>
+<trainerSessions>
+<% for (const session of trainerSessions) { %>
+  <trainerSession>
+    <id><%= session.id %></id>
+    <sessionDate><%= session.sessionDate %></sessionDate>
+    <sessionTime><%= session.sessionTime %></sessionTime>
+    <trainerId><%= session.trainerId.id %></trainerId>
+    <activity>
+      <activityId><%= session.activityId.id %></activityId>
+      <activityName><%= session.activityId.activityName %></activityName>
+      <activityDescription><%= session.activityId.activityDescription %></activityDescription>
+    </activity>
+    <location>
+      <locationId><%= session.locationId.id %></locationId>
+      <locationTitle><%= session.locationId.locationTitle %></locationTitle>
+      <locationAddress><%= session.locationId.locationAddress %></locationAddress>
+    </location>
+  </trainerSession>
+  <% } %>
+</trainerSessions>
+  

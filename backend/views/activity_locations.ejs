@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/admin.css">
+  <title>Edit Activities and Locations</title>
+  <style>
+    * {
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    html {
+      padding: 0;
+    }
+
+    #render-header {
+      border-style: solid;
+      border-right-color: transparent;
+      border-left-color: transparent;
+      border-top-color: transparent;
+      border-bottom-color: white;
+      border-width: 1px;
+      padding: 10px 0px;
+      display: flex;
+      align-items: center;
+      gap: 12%;
+    }
+
+    #render-locations, #render-activities, #edit-activity, #delete-activity, #edit-location, #delete-location, #create-activity, #create-location {
+      background-color: #1F4D7C;
+      color: white;
+      padding: 3%;
+      border-radius: 10px;
+      border-style: none;
+      font-weight: bold;
+      font-size: 20px;
+    }
+
+    #return-admin {
+      margin-left: 3%;
+      font-size: 20px;
+    }
+
+    #activities, #locations {
+      margin: 0% 5%;
+      padding-bottom: 10%;
+    }
+
+    #searchbar {
+      margin: 5% 10%;
+      width: 80%;
+    }
+    
+    #location-block, #activity-block {
+      text-align: center;
+      margin: 10% 0%;
+    }
+
+    #location-block p, #activity-block > p {
+      font-size: 20px;
+      text-wrap: wrap;
+      font-weight: bold;
+      text-align: left;
+    }
+
+    #edit-activity, #edit-location {
+      margin: 3%;
+    }
+
+    #delete-activity, #delete-location {
+      margin: 3%;
+      background-color: #602828;
+    }
+
+    #create-activity, #create-location {
+      background-color: white;
+      color: #1F4D7C;
+      margin: 10% 30%;
+    }
+
+    #button-row-2 {
+      margin: 7% 0%;
+    }
+      
+    .hide, #edit-location-id, #edit-activity-id, #delete-location-id, #delete-activity-id {
+      display: none;
+    }
+
+    #create-activity-dialog, #create-location-dialog {
+      width: 70%;
+    }
+
+    input[type='text'] {
+      padding: 8px;
+      border: 2px solid #ccc;
+      border-radius: 4px;
+      transition: border-color 0.3s ease;
+      width: 100%;
+      box-sizing: border-box;
+      margin-bottom: 10px;
+    }
+    
+    form {
+      width: 100%;
+      margin: 0 auto;
+    }
+    
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    .hidden-results {
+        display: none;
+    }
+    
+    #create, #edit, #close-dialog {
+      background-color: #4588a0;
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 20px;
+      width: 100%;
+      font-size: 16px;
+    }
+
+    #delete {
+      background-color: #a04545;
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 20px;
+      width: 100%;
+      font-size: 16px;
+    }
+    
+    #create:hover, #edit:hover {
+      background-color: #51a1d2;
+    }
+
+    #delete:hover {
+      background-color: #602828;
+    }
+
+    #close-dialog:hover {
+      background-color: #385f78;
+    }
+
+    input.invalid {
+      border-color: #ff3860;
+    }
+
+    .error-message {
+      color: #ff3860;
+      font-size: 0.85em;
+    }
+
+    #option-buttons-row {
+      background-color: #000318;
+      border-style: solid;
+      border-top-color: #ccc;
+      border-bottom-color: transparent;
+      border-right-color: transparent;
+      border-left-color: transparent;
+      height: 14%;      
+      position: fixed;
+      bottom: 0;
+      right: 0;
+      left: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    @media (min-width:500px) {
+      #render-header {
+        gap: 22%;
+      }
+    }   
+
+  </style>
+</head>
+<body>
+  <section id="render-header">
+    <a href="/admin" id="return-admin">&lt;</a>
+    <a id="render-locations">Locations</a>
+    <a id="render-activities">Activities</a>
+  </section>
+  
+  <section id="searchbar-section">
+    <input type="text" id="searchbar" placeholder="Search for locations and activities">
+  </section>
+
+  <section id="locations" class="hide">
+    <% for (const location of locations) { %>
+      <section id="location-block">
+        <p><%= location.locationTitle %>: 
+          <br>
+          <%= location.locationAddress %></p>
+          <section id="button-row-2">
+            <a id="edit-location" onclick="openEditLocationDialog('<%= location.id %>', '<%= location.locationTitle %>', '<%= location.locationAddress %>')">Edit</a>
+            <a id="delete-location" onclick="openDeleteLocationDialog('<%= location.id %>', '<%= location.locationTitle %>')">Delete</a>
+          </section>
+        </section>
+        <% } %>
+        <section id="option-buttons-row">   
+          <button id="create-location">Create Location</button>
+        </section>
+  </section>
+
+  <section id="activities">
+    <% for (const activity of activities) { %>
+      <section id="activity-block">
+        <p><%= activity.activityName %>:
+          <br>
+          <%= activity.activityDescription %></p>
+
+        <section id="button-row-2">
+          <a id="edit-activity" onclick="openEditActivityDialog('<%= activity.id %>', '<%= activity.activityName %>', '<%= activity.activityDescription %>')">Edit</a>
+          <a id="delete-activity" onclick="openDeleteActivityDialog('<%= activity.id %>', '<%= activity.activityName %>')">Delete</a>
+        </section>
+      </section>
+      <% } %>
+        <section id="option-buttons-row">   
+          <button id="create-activity">Create Activity</button>
+        </section>
+  </section>
+
+
+
+  <dialog id="create-activity-dialog">
+      <form action="/admin/editmore" method="post" id="create-activity-form" novalidate>
+        <label for="activity-name">Activity Name:</label>
+        <input type="text" name="activityName" id="activity-name" required pattern="^[a-zA-Z0-9]+([ -]?[a-zA-Z0-9]+)*$" />
+        <span class="error-message" id="activity-name-error"></span>
+
+        <label for="activity-description">Activity Description:</label>
+        <input type="text" name="activityDescription" id="activity-description" required pattern="^[a-zA-Z0-9]+([ -]?[a-zA-Z0-9]+)*$"/>
+        <span class="error-message" id="activity-description-error"></span>
+
+        <button id="create" name="action" value="createActivity">Create</button>
+      </form>
+    <button id="close-dialog" onclick="createActivityDialog.close()">Cancel</button>
+  </dialog>
+
+  <dialog id="create-location-dialog">
+      <form action="/admin/editmore" method="post" id="create-location-form" novalidate>
+        <label for="location-title">Location title:</label>
+        <input type="text" name="locationTitle" id="location-title" required pattern="^[a-zA-Z0-9]+([ -]?[a-zA-Z0-9]+)*$" />
+        <span class="error-message" id="location-title-error"></span>
+
+        <label for="location-address">Location Address:</label>
+        <input type="text" name="locationAddress" id="location-address" required pattern="^[a-zA-Z0-9]+([ -]?[a-zA-Z0-9]+)*$"/>
+        <span class="error-message" id="location-address-error"></span>
+        <button id="create" name="action" value="createLocation">Create</button>
+      </form>
+    <button id="close-dialog" onclick="createLocationDialog.close()">Cancel</button>
+  </dialog>
+
+  
+  <dialog id="edit-location-dialog">
+    <form action="/admin/editmore" method="post" id="edit-location-form" novalidate>
+      <input type="hidden-results" name="locationId" id="edit-location-id">
+      
+      <label for="edit-location-title">Location Title:</label>
+      <input type="text" name="locationTitle" id="edit-location-title" required pattern="^[a-zA-Z0-9]+([ -]?[a-zA-Z0-9]+)*$"/>
+      <span class="error-message" id="edit-location-title-error"></span>
+
+      <label for="edit-location-address">Location Address:</label>
+      <input type="text" name="locationAddress" id="edit-location-address" required pattern="^[a-zA-Z0-9]+([ -]?[a-zA-Z0-9]+)*$"/>
+      <span class="error-message" id="edit-location-address-error"></span>
+
+      <button id="edit" name="action" value="editLocation">Edit</button>
+    </form>
+    <button id="close-dialog" onclick="editLocationDialog.close()">Cancel</button>
+  </dialog>
+
+  
+  <dialog id="edit-activity-dialog">
+      <form action="/admin/editmore" method="post" id="edit-activity-form" novalidate>
+        <input type="hidden-results" name="activityId" id="edit-activity-id">
+      
+        <label for="edit-activity-name">Activity Name:</label>
+        <input type="text" name="activityName" id="edit-activity-name" required pattern="^[a-zA-Z0-9]+([ -]?[a-zA-Z0-9]+)*$" />
+        <span class="error-message" id="edit-activity-name-error"></span>
+
+        <label for="edit-activity-description">Activity Description:</label>
+        <input type="text" name="activityDescription" id="edit-activity-description" required pattern="^[a-zA-Z0-9]+([ -]?[a-zA-Z0-9]+)*$"/>
+        <span class="error-message" id="edit-activity-description-error"></span>
+
+        <button id="edit" name="action" value="editActivity">Save</button>
+      </form>
+      <button id="close-dialog" onclick="editActivityDialog.close()">Cancel</button>
+  </dialog>
+
+    <dialog id="delete-activity-dialog">
+      <form action="/admin/editmore" method="post" id="delete-activity-form">
+        <input type="hidden-results" name="activityId" id="delete-activity-id">
+        <p>Are you sure you want to delete the activity: <strong id="delete-activity-name"></strong>? (ALL SESSIONS AND BOOKINGS WITH THIS ACTIVITY WILL BE SUBSEQUENTLY DELETED)</p>
+        <button id="delete" name="action" value="deleteActivity">Delete</button>
+      </form>
+      <button id="close-dialog" onclick="deleteActivityDialog.close()">Cancel</button>
+    </dialog>
+
+    <dialog id="delete-location-dialog">
+      <form action="/admin/editmore" method="post" id="delete-location-form">
+        <input type="hidden-results" name="locationId" id="delete-location-id">
+        <p>Are you sure you want to delete the location: <strong id="delete-location-name"></strong>? (ALL SESSIONS AND BOOKINGS WITH THIS LOCATION WILL BE SUBSEQUENTLY DELETED, THIS LOCATION WILL ALSO BE REMOVED FROM USERS AND WILL BE REGISTERED AS NULL)</p>
+        <button id="delete" name="action" value="deleteLocation">Delete</button>
+      </form>
+      <button id="close-dialog" onclick="deleteLocationDialog.close()">Cancel</button>
+    </dialog>
+
+<%- include('partials/success_status.ejs') %>
+
+<script>
+    let renderLocations = document.getElementById('render-locations');
+    let renderActivities = document.getElementById('render-activities');
+    let activitySection = document.getElementById('activities');
+    let locationSection = document.getElementById('locations');
+
+    let createLocationForm = document.getElementById('create-location-form');
+    let editLocationForm = document.getElementById('edit-location-form');
+    let createActivityForm = document.getElementById('create-activity-form');
+    let editActivityForm = document.getElementById('edit-activity-form');
+
+    let createActivity = document.getElementById('create-activity');
+    let createLocation = document.getElementById('create-location');
+
+    let createActivityDialog = document.getElementById('create-activity-dialog');
+    let createLocationDialog = document.getElementById('create-location-dialog');
+    let editActivityDialog = document.getElementById('edit-activity-dialog');
+    let editLocationDialog = document.getElementById('edit-location-dialog');
+    let deleteActivityDialog = document.getElementById('delete-activity-dialog');
+    let deleteLocationDialog = document.getElementById('delete-location-dialog');
+
+    let confirmCreate = [...document.querySelectorAll('#create')];
+    let confirmEdit = [...document.querySelectorAll('#edit')];
+    let confirmDelete = [...document.querySelectorAll('#delete')];
+
+    let searchBar = document.getElementById('searchbar');
+
+    document.querySelectorAll('#location-block').forEach(block => block.classList.add('location-block'));
+    document.querySelectorAll('#activity-block').forEach(block => block.classList.add('activity-block'));
+
+    function filterItems() {
+        const searchTerm = searchBar.value.toLowerCase().trim();
+        const isLocationsVisible = !locationSection.classList.contains('hide');
+        const isActivitiesVisible = !activitySection.classList.contains('hide');
+
+        if (isLocationsVisible) {
+            const locationBlocks = document.querySelectorAll('.location-block');
+            locationBlocks.forEach(block => {
+                const title = block.querySelector('p').textContent.toLowerCase();
+                if (searchTerm === '' || title.includes(searchTerm)) {
+                    block.classList.remove('hidden-results');
+                } else {
+                    block.classList.add('hidden-results');
+                }
+            });
+        }
+
+        if (isActivitiesVisible) {
+            const activityBlocks = document.querySelectorAll('.activity-block');
+            activityBlocks.forEach(block => {
+                const text = block.querySelector('p').textContent.toLowerCase();
+                if (searchTerm === '' || text.includes(searchTerm)) {
+                    block.classList.remove('hidden-results');
+                } else {
+                    block.classList.add('hidden-results');
+                }
+            });
+        }
+    }
+
+    searchBar.addEventListener('input', filterItems);
+
+    function displayValidationError(input) {
+        const errorElement = document.getElementById(`${input.id}-error`);
+        if (!errorElement) return;
+
+        const regex = /^[a-zA-Z0-9]+([ -]?[a-zA-Z0-9]+)*$/;
+        const value = input.value.trim();
+
+  if (input.validity.valueMissing || value === '') {
+        errorElement.textContent = 'This field is required';
+        input.classList.add('invalid');
+      } else if (!regex.test(value)) {
+        if (/[^a-zA-Z0-9 -]/.test(value)) {
+          errorElement.textContent = 'Invalid characters. Use letters, numbers, single spaces, or single hyphens only.';
+        } else if (/\s{2,}/.test(value) || /-{2,}/.test(value)) {
+          errorElement.textContent = 'Multiple consecutive spaces or hyphens are not allowed.';
+        } else {
+          errorElement.textContent = input.title || 'Invalid format. Use letters, numbers, single spaces, or single hyphens only.';
+        }
+        input.classList.add('invalid');
+      } else {
+        errorElement.textContent = '';
+        input.classList.remove('invalid');
+      }
+    }
+
+function validateForm(form, event) {
+      let isValid = true;
+      const allInputs = form.querySelectorAll('input[type="text"]');
+      allInputs.forEach(input => {
+        const regex = /^[a-zA-Z0-9]+([ -]?[a-zA-Z0-9]+)*$/;
+        const value = input.value.trim();
+
+        if (!input.checkValidity() || !regex.test(value)) {
+          isValid = false;
+          input.classList.add('invalid');
+          displayValidationError(input);
+        } else {
+          input.classList.remove('invalid');
+          const errorElement = document.getElementById(`${input.id}-error`);
+          if (errorElement) {
+            errorElement.textContent = '';
+          }
+        }
+      });
+      if (!isValid) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+      return isValid;
+    }
+
+  [createActivityForm, createLocationForm, editActivityForm, editLocationForm].forEach(form => {
+      form.addEventListener('submit', event => {
+          if (validateForm(form, event)) {
+              form.closest('dialog').close();
+              successPopup.style.display = 'flex';
+              successHeader.innerText = form.id.includes('create') ? 'New item has been created' : 'Item successfully edited';
+          }
+      })
+
+      form.querySelectorAll('input[type="text"]').forEach(input => {
+        input.addEventListener('input', () => {
+          displayValidationError(input);
+        });
+
+        displayValidationError(input);
+      });
+  })
+
+    confirmDelete.forEach(element => {
+        element.addEventListener('click', event => {
+            deleteActivityDialog.close()
+            deleteLocationDialog.close()
+            successPopup.style.display = 'flex'
+            successHeader.innerText = 'Item has been deleted'
+        })
+    })
+
+    renderLocations.addEventListener('click', event => {
+        locationSection.classList.remove('hide')
+        activitySection.classList.add('hide')
+    });
+
+    renderActivities.addEventListener('click', event => {
+        activitySection.classList.remove('hide')
+        locationSection.classList.add('hide')
+    });
+
+    createActivity.addEventListener('click', event => {
+        createActivityDialog.showModal()
+    });
+
+    createLocation.addEventListener('click', event => {
+        createLocationDialog.showModal()
+    });
+
+    function openEditActivityDialog(id, name, description) {
+        document.getElementById('edit-activity-id').value = id
+        document.getElementById('edit-activity-name').value = name
+        document.getElementById('edit-activity-description').value = description
+        editActivityDialog.showModal()
+    }
+
+    function openEditLocationDialog(id, title, address) {
+        document.getElementById('edit-location-id').value = id
+        document.getElementById('edit-location-title').value = title
+        document.getElementById('edit-location-address').value = address
+        editLocationDialog.showModal()
+    }
+
+    function openDeleteActivityDialog(id, name) {
+        document.getElementById('delete-activity-id').value = id
+        document.getElementById('delete-activity-name').textContent = name
+        deleteActivityDialog.showModal()
+    }
+
+    function openDeleteLocationDialog(id, name) {
+        document.getElementById('delete-location-id').value = id
+        document.getElementById('delete-location-name').textContent = name
+        deleteLocationDialog.showModal()
+    }
+
+    filterItems()
+</script>
+</body>
+</html>

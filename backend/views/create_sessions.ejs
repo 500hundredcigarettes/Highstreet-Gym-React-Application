@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/css/admin.css">
+  <title>Create a new session</title>   
+</head>
+
+<body>
+  <%- include('partials/header.ejs') %>
+
+  <form id="create-session-form" action="/sessions/create/<%= selectedSession.id %>" method="post">
+      
+  <select name="selectLocation" id="select-location">
+    <% for(const location of locations) { %>
+      <option value="<%= location.id %>"  <%= selectedSession.locationId.id == location.id? "selected" : ""%>>
+        <%= location.locationTitle %>
+      </option>
+      <% } %>
+    </select>
+
+  <select name="selectActivity" id="select-activity">
+    <% for(const activity of activities) { %>
+      <option value="<%= activity.id %>"  <%= selectedSession.activityId.id == activity.id? "selected" : ""%>>
+        <%= activity.activityName %>
+      </option>
+      <% } %>
+    </select>
+      
+    <input 
+    type="date" 
+    name="sessionDate"
+    min="2025-10-29"
+    max="2026-10-29"
+    id="session-date"
+    value="<%= typeof selectedSession.sessionDate === 'object' ? selectedSession.sessionDate.toLocaleDateString().replaceAll('/', '-').split(/\b/).reverse().join('') : selectedSession.sessionDate %>"
+    required>
+
+    <input 
+    type="time" 
+    name="sessionTime"
+    min="09:00"
+    max="20:00"
+    id="session-time"
+    value="<%= selectedSession.sessionTime %>"
+    required
+    >
+    <select name="selectTrainer" id="select-trainer">
+      <% if (user.role == 'Admin') { %>
+        <% for(const trainer of trainers) { %>
+        <option value="<%= trainer.id %>" <%= selectedSession.trainerId.id == trainer.id? "selected" : ""%>>
+          <%= trainer.firstName + ' ' + trainer.lastName %>
+        </option>
+        <% } %>
+      <% } else if (user.role == 'Trainer') { %>
+          <option value="<%= user.id %>" <%= user.id %>>
+            <%= user.firstName + ' ' + user.lastName %>
+          </option>
+      <% } %>
+    </select>
+    
+    <section id="button-row">
+      <a href="/sessions">Cancel</a>
+      <% if (selectedSession.id == null) { %>
+        <button id="create-session" name="action" value="create">Create</button>
+      <% } else { %>
+          <button id="update-session" name="action" value="update">Update</button>
+      <% } %>
+      </section>
+      <% if (selectedSession.id !== null) { %>
+        <button id="delete-session" name="action" value="delete">Delete Session</button>
+      <% } %>
+    </form>
+
+    <%- include('partials/success_status.ejs') %>
+
+    <%- include('partials/footer.ejs') %>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+  const form = document.getElementById('create-session-form')
+  let createSession = document.getElementById('create-session') ?? 0
+  let updateSession = document.getElementById('update-session') ?? 0
+  let deleteSession = document.getElementById('delete-session')
+
+  if (updateSession) {
+    updateSession.addEventListener('click', event => {
+      if (form.checkValidity()) {
+        successPopup.style.display = 'flex'
+        successHeader.innerText = 'Session successfully updated'
+      }
+    })  
+  }
+  if (createSession) {
+    createSession.addEventListener('click', event => {
+      if (form.checkValidity()) {
+        successPopup.style.display = 'flex'
+        successHeader.innerText = 'Session successfully created'
+      }
+    })  
+  }
+    deleteSession.addEventListener('click', event => {
+    if (form.checkValidity()) {
+      successPopup.style.display = 'flex'
+      successHeader.innerText = 'Session has been deleted'
+    }
+  })  
+    
+
+})
+</script>
+</body>
+</html>

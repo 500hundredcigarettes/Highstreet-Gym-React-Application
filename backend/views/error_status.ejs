@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/css/main.css">
+  <title>Status Page</title>
+  <style>
+    article {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 0% 5%;
+    }
+
+    #error-popup{
+      background-color: rgba(1, 4, 15, 0.596); 
+      display: none; 
+      position: fixed; 
+      top: 50px; 
+      left: 0px; 
+      bottom: 0px;
+      right: 0px; 
+      align-items: center; 
+      justify-content: center;
+    }
+    
+    #error-header, #error-message {
+      font-size: 30px;
+      text-align: left;
+      color: white;
+      font-family: Arial, Helvetica, sans-serif;
+      font-weight: bold;
+    }
+    
+    #confirm-popup {
+      text-decoration: underline;
+      font-weight: bold;
+      color: #1F4D7C;
+      font-size: 25px;
+    }
+    </style>
+</head>
+<body>
+    <article>
+      <section>
+        <% if (typeof status !== "undefined") { %>
+          <h2 id="error-header"><%= status %>:</h2>
+          <% } %>
+          
+          <% if(typeof message !== "undefined") { %>
+            <p id="error-message"><%= message %></p>
+            <% } %>  
+          </section>
+      <a href="/<%= redirect %>" id="confirm-popup"><%= redirectMessage %></a>
+    </article>
+</body>
+</html>

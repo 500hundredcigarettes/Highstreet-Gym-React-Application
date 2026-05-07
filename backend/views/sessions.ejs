@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <% if (user.role == 'Admin') { %>
+    <link rel="stylesheet" href="/css/admin.css">
+  <% } else { %>
+    <link rel="stylesheet" href="/css/main.css">
+  <% } %>
+
+  <% if (user.role == "Trainer") { %>
+  <style>
+  #session-block {
+    margin: 10% 7%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  #update-session-block, #session-block, #create-session-block {
+    display: grid;
+    grid-template-columns: 2fr 2fr 1fr;
+    align-items: center;
+    justify-content: space-evenly;
+    margin: 3% 3%;
+    border-color: transparent;
+    border-bottom-color: #1F4D7C;
+    border-bottom-width: 1px;
+    border-style: solid;
+  }
+
+  #update-session-block > p, #update-session-block > a, #session-block > p, #session-block > a, #create-session-block > p, #create-session-block > a {
+    font-size: 15px;
+    margin: 5% 2%;
+  }
+  </style>
+<% } else { %>
+  <style>
+    #session-date {
+      font-size: 22px;
+      font-weight: 700;
+      margin: 0px;
+      display: inline-block;
+    }
+  </style>
+<% } %>
+  <title>Gym Sessions</title>
+</head>
+<body>
+      <%- include('partials/header.ejs') %>
+
+      <% 
+        let stringStartDate = startDate + ''
+        let stringEndDate = endDate + ''
+        
+
+        let formatStartDate = stringStartDate.slice(4, 10).split(/\b/).reverse()
+        let formatEndDate = stringEndDate.slice(4, 10).split(/\b/).reverse()
+        let dateBetweenString = formatStartDate[0] + ' ' + formatStartDate[2] + ' - ' + formatEndDate[0] + ' ' + formatEndDate[2]
+
+        console.log(dateBetweenString)
+      %>
+
+    <p id="timetable-header">
+      Timetable for: <span id="date-between" style="text-decoration: underline; "></span>
+    </p>
+
+    <form
+      style="display: inline;"
+      id="week-form"
+      action="/sessions"
+      method="post"
+    >
+      <label for="week"></label>
+      <input type="week" name="week" id="week" 
+        value='<%= week %>'
+        min="2025-W44" 
+        max="2026-W44"
+      />
+    </form>
+
+    <h3 style="text-align: center; margin-top: 0px;"><%= selectMessage %></h3>
+
+
+<% if (user && user.role === 'Admin') { %>
+  <section id="trainer-filter-block" style="margin: 15px 0; display: flex; align-items: center; gap: 10px;">
+    <label for="trainer-filter" style="font-weight: bold;">Filter by Trainer:</label>
+    <select id="trainer-filter" style="padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+      <option value="all">All Trainers</option>
+      <% 
+        const uniqueTrainers = [];
+        const trainerMap = new Map();
+        if (uniqueSessions) {
+          uniqueSessions.forEach(session => {
+            if (session.trainerId && !trainerMap.has(session.trainerId.id)) {
+              trainerMap.set(session.trainerId.id, true);
+              uniqueTrainers.push(session.trainerId);
+            }
+          })
+        }
+        uniqueTrainers.forEach(trainer => {
+      %>
+        <option value="<%= trainer.id %>">
+          <%= trainer.firstName %> <%= trainer.lastName %>
+        </option>
+      <% }) %>
+    </select>
+  </section>
+<% } %>
+
+
+  <section id="days-block">
+    <section id="monday">Mo</section>
+    <section id="tuesday">Tu</section>
+    <section id="wednesday">We</section>
+    <section id="thursday">Th</section>
+    <section id="friday">Fr</section>
+    <section id="saturday">Sa</section>
+    <section id="sunday">Su</section>
+  </section>
+    
+  <section id="all-sessions">
+    <% if (user && user.role == 'Admin' || user && user.role == 'Trainer') { %>
+      <a href="/sessions/create" id="create-session">Add new session</a>
+      <% for(const session of uniqueSessions.sort((a, b) => a.sessionDate - b.sessionDate)) { %>
+        <% 
+          let rawDate = session.sessionDate + '';
+          let formattedSessionDate = rawDate.slice(4, 10).split(/\b/).reverse();
+        %>
+      <section id="session-block" data-day="<%= new Date(session.sessionDate).getDay() %>" data-trainer-id="<%= session.trainerId.id %>"> 
+            <p id="activity-name"><%= session.activityId.activityName %></p>
+            <p><%= session.sessionTime %></p>
+            <p id="session-date"><%= formattedSessionDate[0] + ' ' + formattedSessionDate[2] %></p>
+            <p><%= session.trainerId.firstName %> <%= session.trainerId.lastName %></p>
+            <p><%= session.locationId.locationTitle %></p>
+        <a id="book-button" href="sessions/create/<%= session.id %>">Edit session</a>
+      </section>  
+      <% } %>
+  <% } else { %>
+      <% for(const session of uniqueSessions.sort((a, b) => a.sessionDate - b.sessionDate)) { %>
+        <% 
+          let rawDate = session.sessionDate + '';
+          let formattedSessionDate = rawDate.slice(4, 10).split(/\b/).reverse();
+        %>
+      <section id="session-block" data-day="<%= new Date(session.sessionDate).getDay() %>">
+        <p id="activity-name"><%= session.activityId.activityName %></p>
+        <p id="session-date">(<%= formattedSessionDate[0] + ' ' + formattedSessionDate[2] %>)</p>
+        <a id="book-button" href="sessions/<%= session.id %>">Book ></a>
+      </section>
+      <% } %>
+    <% } %>
+  </section>
+
+
+<script>
+    if (document.getElementById('week').value) {
+      document.getElementById('date-between').innerText = '<%= dateBetweenString %>'
+    }
+
+
+    document.addEventListener('DOMContentLoaded', () => {
+    let weekInput = document.getElementById('week')
+    let weekForm = document.getElementById('week-form')
+
+    weekInput.addEventListener('change', () => {
+      weekForm.submit()  
+    })
+
+    weekInput.addEventListener('blur', () => {
+      weekForm.submit()
+    })
+  })
+
+  // Filtering logic
+  let currentSelectedDay = null;
+  let selectedDayNum = null;
+  let currentTrainer = 'all';
+
+  const dayMap = {
+    'sunday': 0,
+    'monday': 1,
+    'tuesday': 2,
+    'wednesday': 3,
+    'thursday': 4,
+    'friday': 5,
+    'saturday': 6
+  };
+
+  const trainerFilter = document.getElementById('trainer-filter')
+  if (trainerFilter) {
+    trainerFilter.addEventListener('change', () => {
+      currentTrainer = trainerFilter.value;
+      filterSessions();
+    });
+  }
+
+  const filterSessions = () => {
+    const sessions = document.querySelectorAll('#session-block');
+    sessions.forEach(session => {
+      let show = true;
+      const sessionDay = parseInt(session.getAttribute('data-day'));
+      if (selectedDayNum !== null && sessionDay !== selectedDayNum) {
+        show = false;
+      }
+      if (currentTrainer !== 'all') {
+        const sessionTrainer = session.getAttribute('data-trainer-id');
+        if (sessionTrainer && sessionTrainer !== currentTrainer) {
+          show = false;
+        }
+      }
+      session.style.display = show ? 'grid' : 'none';
+    });
+  };
+
+  let renderSessionByDays = document.querySelectorAll('#days-block > section');
+  renderSessionByDays.forEach(day => {
+    day.addEventListener('click', () => {
+      if (currentSelectedDay) {
+        currentSelectedDay.style.border = 'none';
+      }
+
+      day.style.border = '2px solid #1F4D7C';
+      currentSelectedDay = day;
+
+      const dayId = day.id;
+      selectedDayNum = dayMap[dayId];
+      
+      filterSessions();
+    });
+  });
+</script>
+
+  <%- include('partials/footer.ejs') %>
+</body>
+</html>

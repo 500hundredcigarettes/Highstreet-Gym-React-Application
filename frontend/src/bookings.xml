@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE booking [
+<!ELEMENT booking (id, userId, session)>
+<!ELEMENT id (#PCDATA)>
+<!ELEMENT userId (#PCDATA)>
+<!ELEMENT session (sessionId, sessionDate, sessionTime, activity)>
+<!ELEMENT sessionId (#PCDATA)>
+<!ELEMENT sessionDate (#PCDATA)>
+<!ELEMENT sessionTime (#PCDATA)>
+<!ELEMENT sessionDate (#PCDATA)>
+<!ELEMENT activity (activityId, activityName, activityDescription)>
+<!ELEMENT activityId (#PCDATA)>
+<!ELEMENT activityName (#PCDATA)>
+<!ELEMENT activityDescription (#PCDATA)>
+]>
+<booking>
+	<id>9</id>
+	<userId>51</userId>
+	<session>
+		<sessionId>21</sessionId>
+		<sessionDate>2025-12-04</sessionDate>
+		<sessionTime>17:00:00</sessionTime>
+		<activity>
+			<activityId>3</activityId>
+			<activityName>Boxing</activityName>
+			<activityDescription>An awesome combat sport that only allows for punches</activityDescription>
+		</activity>
+	</session>
+</booking>

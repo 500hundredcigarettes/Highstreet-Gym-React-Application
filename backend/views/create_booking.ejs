@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Book this session?</title>
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+  <%- include('partials/header.ejs') %>
+
+  <% 
+    let currentSession = sharedSessions.find((session) => session.id == sessionId);
+    let index = sharedSessions.indexOf(currentSession);
+    sharedSessions.splice(index, 1);
+    sharedSessions.unshift(currentSession);
+    
+    const uniqueTrainers = [];
+    const trainerMap = new Map();
+    
+    
+    for (const session of sharedSessions) {
+      const trainerId = session.trainerId.id;
+      if (!trainerMap.has(trainerId)) {
+        trainerMap.set(trainerId, true);
+        uniqueTrainers.push(session);
+      }
+    }
+    
+    const selectedTrainerId = currentSession.trainerId.id;
+    
+    const trainerSessions = sharedSessions.filter(session => 
+      session.trainerId.id === selectedTrainerId
+    )
+
+    const dayMap = [
+      'Sunday',
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday'
+    ]
+
+    let rawDate = currentSession.sessionDate + ''
+
+    let formattedSessionDate = rawDate.slice(4, 10).split(/\b/).reverse()
+    
+    let dayOfSession = dayMap[currentSession.sessionDate.getDay()]
+
+    console.log(currentSession)
+
+    %>
+
+  <form
+    action="/sessions/<%= sessionId %>"
+    id="create-booking-form"
+    method="post"
+    class="form-grid responsive-half margin-auto"
+  >
+
+    <p id="session-day">(<%= dayOfSession %>)</p>
+    <p id="session-activity"><%= currentSession.activityId.activityName %></p>
+    <p id="session-date"><%= formattedSessionDate[0] + ' ' + formattedSessionDate[2] %> - <%= currentSession.locationId.locationTitle.replace(" High Street Gym", "") %></p>
+
+    <select name="selectTime" id="select-time" onchange="window.location.href='/sessions/' + this.value">
+      <% for(const session of trainerSessions) { %>  
+        <option value="<%= session.id %>" 
+                <%= session.id == sessionId ? 'selected' : '' %>>
+          <%= session.sessionTime %>
+        </option>
+      <% } %>
+    </select>
+
+    <select name="selectTrainer" id="select-trainer" onchange="window.location.href='/sessions/' + this.value">
+      <% for(const session of uniqueTrainers) { %>
+        <option value="<%= session.id %>" 
+                <%= session.id == sessionId ? 'selected' : '' %>>
+          <%= session.trainerId.firstName + ' ' + session.trainerId.lastName %>
+        </option>
+      <% } %>
+    </select>
+
+    <section id="button-row">
+      <a href="/sessions">Cancel</a>
+      <button onclick="renderSuccessPopup()">Confirm</button>
+    </section>
+  </form>
+
+    <%- include('partials/footer.ejs') %>
+    <%- include('partials/success_status.ejs') %>
+
+  <script>
+    confirmPopupSuccess.addEventListener('click', event =>  {
+      successPopup.style.display = 'none'
+      window.location.reload()
+    })
+
+    function renderSuccessPopup() {
+      successPopup.style.display = 'flex'
+      successHeader.innerText = `This session has been booked! Check your bookings to see further details.`
+    }
+  </script>
+</body>
+</html>

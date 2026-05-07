@@ -1,0 +1,600 @@
+html {
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: #000318;
+  color: white;
+  padding-top: 18%;
+}
+
+body {
+  margin: 0px;
+  padding-bottom: 20%;
+}
+
+nav {
+  display: flex;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: #7c1f1f;
+  align-items: center;
+  justify-content: space-between;
+} 
+
+nav h2 {
+  margin-left: 10%;
+  color: white;
+}
+
+nav img {
+  width: 30px; 
+  height: 30px; 
+  border-radius: 50%;  
+  margin-left: -100%;
+}
+
+input, select {
+  font-size: 18px;
+  padding: 2% 0%;
+  background: #262428;
+  border-color: white;
+  border-style: solid;
+  border-width: 1px;
+  color: white;
+}
+
+label {
+  font-weight: bold;
+  font-size: 20px;
+  margin: 1%;
+}
+
+#welcome-header {
+  margin-left: 20%;
+  margin-right: 20%;
+  text-align: center;
+  color: #1F4D7C;
+}
+
+#login-header {
+  text-align: center;
+  margin-top: 20%;
+}
+
+#authenticate-block {
+  display: flex;
+  margin-left: 7%;
+  margin-right: 7%;
+  justify-content: center;
+  flex-direction: column;
+  width: 86%;
+}
+
+#signup-button, #login-button, #signup-button, #button-row > * {
+  text-align: center;
+  background-color: white;
+  color: #1F4D7C;
+  margin: 5% 5%;
+  padding: 6%;
+  border-radius: 10px;
+  border-style: none;
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.edit-booking {
+  background-color: white;
+  color: #1F4D7C;
+  margin: 0% 1%;
+  border-radius: 10px;
+  border-style: none;
+  font-weight: bold;
+  font-size: 15px;
+}
+
+#signup-button {
+  background-color: transparent;
+  color: white;
+  text-decoration: underline;
+}
+
+#setting-dropdown {
+  position: fixed;
+  padding: 0%;
+  top: 67px;
+  left: 0;
+  right: 0;
+  background-color: #262428;
+  text-align: right;
+  display: none;
+}
+
+#setting-dropdown a {
+  margin: 5%;
+  display: block;
+}
+
+
+a {
+  text-decoration: none;
+  color: white;
+}
+ 
+#timetable-header {
+  display: inline-block;
+  margin-top: 5%;
+  margin-left: 3%;
+  font-size: 22px;
+  font-weight: bold;
+  font-style: italic;
+}
+
+input[type="week"] {
+  width: 30px; 
+  height: 30px; 
+  border: none; 
+  background: url('../img/calender-icon.svg') no-repeat center;
+  background-size: 30px; 
+  cursor: pointer;
+  padding: 0; 
+  margin: 0; 
+}
+
+input[type="week"]::-webkit-calendar-picker-indicator {
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  background: transparent;
+}
+
+#trainer-filter-block {
+  margin: 15px 0; 
+  display: flex;
+  align-items: center; 
+  gap: 10px;
+}
+
+#trainer-filter {
+  padding: 8px; 
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+#days-block, #create-days-block {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+#days-block > section, #create-days-block > section {
+  font-weight: bold;
+  padding-top: 2%;
+  margin: 0% 1.5%;
+  text-align: center;
+  background-color: #262428;
+  border-radius: 5px;
+  height: 100px;
+  width: 122%;
+}
+
+#all-sessions {
+  min-height: 500px;
+  width: 90%;
+  z-index: -1;
+  border-radius: 10px;
+  padding-top: 1%;
+  padding-bottom: 1%;
+  margin: 5% 5%;
+  background-color: #262428;
+}
+
+
+#session-block {
+  margin: 10% 7%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+#update-session-block, #session-block, #create-session-block, .create-session-block {
+  display: grid;
+  grid-template-columns: 2fr 2fr 1fr;
+  align-items: center;
+  justify-content: space-evenly;
+  margin: 3% 3%;
+  border-color: transparent;
+  border-bottom-color: #7c1f1f;
+  border-bottom-width: 1px;
+  border-style: solid;
+}
+
+#update-session-block > p, #update-session-block > a, #session-block > p, #session-block > a, #create-session-block > p, #create-session-block > a, .create-session-block > p, .create-session-block > a {
+  font-size: 15px;
+  margin: 5% 2%;
+}
+
+#activity-name, #book-button {
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0px;
+  display: inline-block;
+}
+
+#book-button, #create-session {
+  text-align: center;
+  color: white;
+  background-color: #7c1f1f;
+  border-radius: 5px;
+  padding: 5px;
+}
+
+#create-session {
+  margin: 2% 10%;
+  display: block;
+}
+
+#create-session-form {
+  display: flex;
+  text-align: center;
+  align-items: center;
+  margin-top: 6%;
+  margin-left: 5%;
+  margin-right: 5%;
+  margin-bottom: 3%;
+  flex-direction: column;
+  background-color: #262428;
+  border-radius: 10px;
+}
+
+#create-session-form > * {
+  width: 80%;
+}
+
+  #create-session-form select, #create-session-form input {
+    background-color: #1F4D7C;
+    color: white;
+    border: none;
+    padding: 6% 3%;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 5% 0%;
+  }
+
+  #create-session-form select option {
+    background-color: #1F4D7C;
+    color: white;
+  }
+
+  #create-session-form select option:disabled {
+    color: white;
+  }
+
+#button-row {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+#button-row > a {
+  background-color: #1F4D7C;
+  color: white;
+}
+
+#button-row > button, #button-row > input[type='submit'] {
+  background-color: white;
+  color: #1F4D7C;
+}
+
+#delete-session, #delete-profile-button {
+  width: 50%;
+  margin: 5% 25%;
+  padding: 3%;
+  text-decoration: underline;
+  background-color: #7c1f1f;
+  color: white;
+  border-style: none;
+  border-radius: 10px;
+  border-style: none;
+  font-weight: bold;
+  font-size: 20px;
+}
+
+#update-profile-button {
+  width: 50%;
+  margin: 2% 25%;
+  padding: 3%;
+  text-decoration: underline;
+  background-color: #1F4D7C;
+  color: white;
+  border-style: none;
+  border-radius: 10px;
+  border-style: none;
+  font-weight: bold;
+  font-size: 20px;
+}
+
+
+.form-grid {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.form-grid > * {
+  padding: 1% 0%;
+  margin: 1% 0%;
+  width: 80%;
+}
+
+.form-grid > label {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+#trainer-activity-row {
+    text-align: left;
+    display: grid;
+    grid-template-columns: 2fr 2fr 1fr;
+    font-weight: bold;
+    margin-left: 4%;
+}
+
+#location-date-row {
+  display: flex;
+  justify-content: space-between;
+  margin-left: 5%;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+
+#return-admin {
+  margin-left: 3%;
+  font-size: 25px;
+}
+
+#change-booking-popup, #create-booking-popup {
+  background-color: grey;
+  padding: 2%;
+}
+
+#delete-booking, #close-booking-popup {
+  border: none;
+  background-color: transparent;
+}
+
+#delete-booking > img {
+  margin: 20px;
+  height: 25px;
+  width: 25px;
+}
+
+#close-booking-popup > img, #create-booking-popup > img {
+  height: 19px;
+  width: 19px;
+  margin: 0px;
+}
+
+  #create-post-popup, #edit-post-popup{
+    background-color: rgba(1, 4, 15, 0.596); 
+    display: none; 
+    position: fixed; 
+    top: 0px; 
+    left: 0px; 
+    bottom: 0px;
+    right: 0px; 
+    align-items: center; 
+    justify-content: center;
+    z-index: 99;
+  }
+
+  #post-block {
+    word-wrap: break-word;
+    width: 84%;
+    margin: 8%;
+    margin-bottom: 5%;
+  }
+
+  #create-post {
+    position: fixed;
+    bottom: 17%;
+    right: 5%;
+    width: 50px; 
+    height: 50px; 
+    padding: 0px;
+    background-color: #1F4D7C;
+    color: white;
+    border: none;
+    font-size: 40px;
+    display: flex; 
+  }
+
+  #post-block > h3 {
+    color: #1F4D7C;
+  }
+
+#post-content, #edit-content {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 18px;
+  padding: 2%;
+  background: #262428;
+  border-color: white;
+  border-style: solid;
+  border-width: 1px;
+  color: white;
+  vertical-align: top;
+  height: 400px;
+  background-color: black;
+  border-radius: 10px;
+  font-weight: bold;
+  font-size: 20px;
+}
+
+  #post-block {
+    word-wrap: break-word;
+    width: 84%;
+    margin: 8%;
+    margin-bottom: 5%;
+  }
+
+  #post-button-row {
+  text-align: center;
+}
+
+ #post-button-row > * {
+  text-align: center;
+  background-color: white;
+  color: #1F4D7C;
+  margin: 5% 5%;
+  padding: 6%;
+  border-radius: 10px;
+  border-style: none;
+  font-weight: bold;
+  font-size: 20px;
+}
+
+#close-post, #close-edit {
+  background-color: #1F4D7C;
+  color: white;
+}
+
+ #confirm-post, #confirm-edit-post {
+  background-color: white;
+  color: #1F4D7C;
+}
+
+#all-bookings {
+  display: flex;
+  flex-direction: column;
+  text-align: right;
+  background-color: #1F4D7C;
+  border-radius: 10px;
+  margin: 7%;
+}
+
+#booking-date {
+  margin-right: 5%;
+}
+
+  #create-post {
+    position: fixed;
+    bottom: 14%;
+    right: 5%;
+    width: 50px; 
+    height: 50px; 
+    padding: 0px;
+    background-color: #7c1f1f;
+    color: white;
+    border: none;
+    font-size: 40px;
+    display: flex; 
+  }
+  
+
+  #post-block > h3 {
+    color: #1F4D7C;
+  }
+
+  #create-post-form, #create-edit-form {
+    padding-left: 10%;
+    padding-right: 10%;
+    padding-top: 10%;
+    padding-bottom: 5%;
+    margin-bottom: 10%;
+    background-color: #262428;
+    border-radius: 10px;
+}
+
+  #create-post-form > #post-content, #create-edit-form > #edit-content {
+    vertical-align: top;
+    height: 400px;
+    border-radius: 10px;
+    border-style: none;
+    background-color: black;
+    border-radius: 10px;
+    font-weight: bold;
+    font-size: 20px;
+  }
+
+  #delete-post {
+    border: none;
+    background-color: transparent;
+  }
+  
+  #delete-post > img {
+    margin-bottom: 10px;
+    height: 25px;
+    width: 25px;
+  }
+
+  #delete-block {
+    display: flex;
+    justify-content: right;
+  }
+
+  #post-seperator {
+    display: block;
+    margin: 10% 0%;
+    height: 2px;
+    width: 100%;
+    background-color: #1F4D7C;
+  }
+  
+
+ #close-post {
+  background-color: #1F4D7C;
+}
+
+#profile-block {
+  margin: 0% 5%;
+}
+
+footer {
+  display: flex;
+  position: fixed;
+  bottom: 0;
+  background-color: #7c1f1f;
+}
+
+footer img {
+  height: 50%;
+  width: 50%;
+  object-fit: contain;
+}
+
+footer > a {
+  font-weight: bold;
+  color: white;
+  text-decoration: none;
+}
+
+footer > a > p {
+  margin: 10% 0%;
+  font-weight: bold;
+  color: white;
+  text-decoration: none;
+}
+
+footer > a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+@media (min-width: 650px) {
+  footer img {
+    width: 30%;
+  }
+}
+
+@media (min-width: 950px) {
+
+  footer > a > p {
+    margin: 5% 0%;
+  }
+
+  footer img {
+    width: 22%;
+  }
+}

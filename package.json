@@ -1,0 +1,16 @@
+{
+  "name": "highstreet-gym",
+  "version": "2.0.0",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Sebastian Wright",
+  "description": "TAFE project for web development cluster assignment",
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "dependencies": {
+    "date-fns": "^4.1.0"
+  }
+}
